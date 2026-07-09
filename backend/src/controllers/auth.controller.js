@@ -1,6 +1,8 @@
+import { AdminResponseDto } from '../dtos/auth.dto.js';
 import {
-  forgotPaswordService,
+  forgotPasswordService,
   loginService,
+  resetPasswordService,
 } from '../services/auth.service.js';
 
 /**
@@ -14,10 +16,12 @@ export const login = async (req, res) => {
 
     const data = await loginService(email, password);
 
+    const responseData = new AdminResponseDto(data, data.token)
+
     res.status(200).json({
       success: true,
       message: 'Login successfully.',
-      data,
+      data: responseData,
     });
   } catch (error) {
     const statusCode = error.statusCode || 500;
@@ -36,7 +40,7 @@ export const login = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    const data = await forgotPaswordService(email);
+    const data = await forgotPasswordService(email);
 
     return res.status(200).json({
       success: true,

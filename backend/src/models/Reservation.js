@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { STATUS_RESERVATIONS } from '../constants/reservation.constant';
+import { STATUS_RESERVATIONS } from '../constants/reservation.constant.js';
 
 const reservationSchema = new Schema(
   {
@@ -17,17 +17,8 @@ const reservationSchema = new Schema(
       match: [/^[0-9]{10,11}$/, 'Invalid phone number.'],
     },
 
-    date: {
-      type: String,
-      required: [true, 'Reservation date is required.'],
-      match: [
-        /^\d{4}-\d{2}-\d{2}$/,
-        'Date reservation have to format YYYY-MM-DD',
-      ],
-    },
-
-    time: {
-      type: String,
+    reservationTime: {
+      type: Date,
       required: [true, 'Reservation time is required.'],
     },
 
@@ -35,7 +26,7 @@ const reservationSchema = new Schema(
       type: Number,
       required: [true, 'Number of guests is required.'],
       min: [1, 'Guests must be at least 1.'],
-      max: [500, "Guests cannot exceed 20."]
+      max: [500, 'Guests cannot exceed 500.'],
     },
 
     status: {
@@ -53,7 +44,7 @@ const reservationSchema = new Schema(
 );
 
 reservationSchema.index({
-  date: 1,
+  reservationTime: 1,
   status: 1,
 });
 

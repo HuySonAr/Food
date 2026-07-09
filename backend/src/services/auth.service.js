@@ -4,6 +4,9 @@ import ApiError from '../utils/ApiError.js';
 import generateToken from '../utils/generateToken.js';
 import sendEmail from '../utils/sendEmail.js';
 
+/**
+ * @desc    Admin Login Service
+ */
 export const loginService = async (email, password) => {
   if (!email || !password) {
     throw new ApiError('Please provide email and password.', 400);
@@ -26,7 +29,7 @@ export const loginService = async (email, password) => {
 /**
  * @desc    Nghiệp vụ Yêu cầu cấp mã OTP khôi phục mật khẩu
  */
-export const forgotPaswordService = async (email) => {
+export const forgotPasswordService = async (email) => {
   if (!email) {
     throw new ApiError('Please provide an email address.', 400);
   }
@@ -43,19 +46,34 @@ export const forgotPaswordService = async (email) => {
   await admin.save();
 
   try {
-    const message = `Mã OTP khôi phục mật khẩu của bạn là: ${otp}. Mã này có hiệu lực trong vòng 5 phút.`;
+    const message = `Your password reset OTP is: ${otp}. This code is valid for 5 minutes.`;
+    const emailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+        <h2 style="color: #d9534f; text-align: center;">Password Reset Request</h2>
+        <p>Hello <strong>Administrator</strong>,</p>
+        <p>You recently requested to reset your password for the Restaurant Admin Dashboard. Here is your One-Time Password (OTP):</p>
+        <div style="background-color: #f8f9fa; padding: 15px; text-align: center; margin: 20px 0; border-radius: 5px;">
+          <span style="font-size: 28px; font-weight: bold; letter-spacing: 5px; color: #333;">${options.otp}</span>
+        </div>
+        <p style="color: #777; font-size: 14px;"><em>* This OTP is valid for <strong>5 minutes</strong>. Do not share this code with anyone.</em></p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+        <p style="font-size: 12px; color: #aaa; text-align: center;">If you did not request a password reset, please ignore this email or secure your account immediately.</p>
+      </div>
+    `;
     const options = {
       email: admin.email,
-      subject: '[Restaurant Dashboard] - Mã OTP Khôi Phục Mật Khẩu',
+      subject: '[Restaurant Dashboard] - Password Reset OTP',
       message: message,
-      otp: otp,
+      html: emailHtml,
     };
 
-    await sendEmail(options);
+    sendEmail(options).catch((err) => {
+      console.error('Background Email Sending Error:', err.message);
+    });
 
     return {
       success: true,
-      message: 'Mã OTP khôi phục mật khẩu đã được gửi đến email của bạn.',
+      message: 'Password reset OTP has been sent to your email.',
     };
   } catch (error) {
     admin.resetOtp = undefined;
@@ -64,7 +82,7 @@ export const forgotPaswordService = async (email) => {
 
     console.error('Nodemailer Error:', error);
     throw new ApiError(
-      'Không thể gửi email lúc này. Vui lòng thử lại sau hoặc kiểm tra cấu hình SMTP.',
+      'Could not send email at this time. Please try again later or check SMTP settings.',
       500,
     );
   }
@@ -96,7 +114,7 @@ export const resetPasswordService = async (email, otp, newPassword) => {
   await admin.save();
 
   return {
-    message: 'Password reset successfully. You can now log in with your new password.',
+    message:
+      'Password reset successfully. You can now log in with your new password.',
   };
 };
-

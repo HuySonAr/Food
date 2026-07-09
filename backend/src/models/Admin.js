@@ -30,9 +30,9 @@ const adminSchema = new Schema(
   { timestamps: true },
 );
 
-adminSchema.pre('save', async function (next) {
+adminSchema.pre('save', async function () {
   if (!this.isModified('password')) {
-    return next();
+    return
   }
 
   this.password = await hashPassword(this.password);

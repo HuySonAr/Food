@@ -66,8 +66,7 @@ Table reservations {
   _id ObjectId [pk]
   customerName varchar [not null, note: 'Tên khách đặt bàn']
   phone varchar [not null, note: 'Số điện thoại khách hàng (Chuỗi 10 số)']
-  date varchar [not null, note: 'Ngày đặt bàn (định dạng chuẩn YYYY-MM-DD)']
-  time varchar [not null, note: 'Giờ đến ăn (ví dụ: 19:30)']
+  reservationTime date [not null, notes: Ngày giờ đặt bàn]
   guests number [not null, note: 'Số lượng khách (1 đến 50 người)']
   status varchar [default: 'pending', note: 'Enum: pending, confirmed, cancelled, completed']
   createdAt timestamp
