@@ -1,10 +1,14 @@
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
 import Reservation from '../models/Reservation.js';
 import sendEmail from '../utils/sendEmail.js';
 import ApiError from '../utils/ApiError.js';
 
 dayjs.extend(customParseFormat);
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 /**
  * @desc    Khách hàng tạo đơn đặt bàn mới (Kèm gửi email thông báo cho Admin)
@@ -27,10 +31,11 @@ export const createReservationService = async (data) => {
 
   const reservation = await Reservation.create(data);
 
-  const reservationDate = dayjs(reservation.reservationTime).format(
-    'DD-MM-YYYY',
-  );
-  const reservationHour = dayjs(reservation.reservationTime).format('hh:mm A');
+  const TZ = process.env.TIMEZONE || 'Asia/Ho_Chi_Minh';
+  const localReservationTime = dayjs(reservation.reservationTime).tz(TZ);
+
+  const reservationDate = localReservationTime.format('DD-MM-YYYY');
+  const reservationHour = localReservationTime.format('hh:mm A');
 
   const adminEmail = process.env.ADMIN_EMAIL;
   const linkDashboard = process.env.LINK_DASHBOARD;
@@ -135,11 +140,15 @@ export const createReservationService = async (data) => {
  * @desc    Admin lấy danh sách đặt bàn
  */
 export const getReservationsService = async (query) => {
-  const { page, limit, keyword, status, sort } = query;
+  const { page, limit, keyword, status, time, sort } = query;
   const filter = {};
 
   if (status) {
     filter.status = status;
+  }
+
+  if (time) {
+    filter.timeSlot = time;
   }
 
   if (keyword) {
@@ -181,4 +190,31 @@ export const getReservationsService = async (query) => {
       totalPages: Math.ceil(total / limit),
     },
   };
+};
+
+/**
+ * @desc    Cập nhật trạng thái đơn đặt bàn.
+ */
+export const updateReservationStatusService = async (id, status) => {
+  const reservation = await Reservation.findById(id);
+
+  if (!reservation) {
+    throw new ApiError('Reservation not found.', 404);
+  }
+
+  if (reservation.status === 'completed') {
+    throw new ApiError('Completed reservations cannot be updated.', 400);
+  }
+
+  if (reservation.status === 'cancelled') {
+    throw new ApiError('Cancelled reservations cannot be updated.', 400);
+  }
+
+  if (reservation.status === status) {
+    throw new ApiError(`Reservation is already ${status}.`, 400);
+  }
+
+  reservation.status = status;
+
+  return await reservation.save();
 };

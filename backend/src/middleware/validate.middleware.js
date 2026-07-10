@@ -1,4 +1,6 @@
 import { ZodError } from 'zod';
+import { RES_CODE } from '../constants/responseCode.constant.js';
+import { formatResponse } from '../utils/response.util.js';
 
 export const validateDto = (schema) => async (req, res, next) => {
   try {
@@ -13,11 +15,11 @@ export const validateDto = (schema) => async (req, res, next) => {
         message: err.message,
       }));
 
-      return res.status(400).json({
-        success: false,
-        message: 'Validation failed. Please check your input data.',
-        errors: errorMessage,
-      });
+      return res.status(400).json(
+        formatResponse(RES_CODE.VALIDATION_ERROR, 'Validation failed', {
+          errors: errorMessage,
+        }),
+      );
     }
   }
 };
@@ -25,13 +27,7 @@ export const validateDto = (schema) => async (req, res, next) => {
 export const validateQueryDto = (schema) => async (req, res, next) => {
   try {
     const validatedQuery = await schema.parseAsync(req.query);
-
-    for (const key of Object.keys(req.query)) {
-      delete req.query[key];
-    }
-
-    Object.assign(req.query, validatedQuery);
-
+    req.validatedQuery = validatedQuery
     return next();
   } catch (error) {
     if (error instanceof ZodError) {
@@ -42,11 +38,15 @@ export const validateQueryDto = (schema) => async (req, res, next) => {
         message: err.message,
       }));
 
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid query parameters.',
-        errors: errorMessage,
-      });
+      return res
+        .status(400)
+        .json(
+          formatResponse(
+            RES_CODE.VALIDATION_ERROR,
+            'Invalid query parameters.',
+            { errors: errorMessage },
+          ),
+        );
     }
     return next(error);
   }

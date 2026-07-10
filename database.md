@@ -67,6 +67,7 @@ Table reservations {
   customerName varchar [not null, note: 'Tên khách đặt bàn']
   phone varchar [not null, note: 'Số điện thoại khách hàng (Chuỗi 10 số)']
   reservationTime date [not null, notes: Ngày giờ đặt bàn]
+  timeSLot string [not null, notes: Giờ đặt]
   guests number [not null, note: 'Số lượng khách (1 đến 50 người)']
   status varchar [default: 'pending', note: 'Enum: pending, confirmed, cancelled, completed']
   createdAt timestamp

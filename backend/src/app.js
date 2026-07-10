@@ -4,6 +4,7 @@ import morgan from 'morgan';
 
 import authRoutes from './routes/auth.route.js';
 import reservationRoutes from './routes/reservation.route.js';
+import { RES_CODE } from './constants/responseCode.constant.js';
 
 const app = express();
 
@@ -20,17 +21,23 @@ app.use('/api/reservations', reservationRoutes);
 
 app.use((req, res, next) => {
   res.status(404).json({
-    success: false,
-    message: `API Endpoint Not Found: ${req.originalUrl}`,
+    code: -1,
+    msg: `API Endpoint Not Found: ${req.originalUrl}`,
+    data: {},
   });
 });
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
+
+  const code = err.responseCode || RES_CODE.FAIL
+
+  const errorData = process.env.NODE_ENV === "development" && err.stack ? {stack: err.stack} : {}
+
   res.status(statusCode).json({
-    success: false,
-    message: err.message || 'Internal Server Error',
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    code: code,
+    msg: err.message || 'Internal Server Error',
+    data: errorData,
   });
 });
 

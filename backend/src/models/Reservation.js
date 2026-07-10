@@ -22,6 +22,11 @@ const reservationSchema = new Schema(
       required: [true, 'Reservation time is required.'],
     },
 
+    timeSlot: {
+      type: String,
+      required: true,
+    },
+
     guests: {
       type: Number,
       required: [true, 'Number of guests is required.'],
@@ -46,6 +51,7 @@ const reservationSchema = new Schema(
 reservationSchema.index({
   reservationTime: 1,
   status: 1,
+  timeSlot: 1,
 });
 
 export default model('Reservation', reservationSchema);

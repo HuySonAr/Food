@@ -3,19 +3,28 @@ import Admin from '../models/Admin.js';
 import ApiError from '../utils/ApiError.js';
 import generateToken from '../utils/generateToken.js';
 import sendEmail from '../utils/sendEmail.js';
+import { RES_CODE } from '../constants/responseCode.constant.js';
 
 /**
  * @desc    Admin Login Service
  */
 export const loginService = async (email, password) => {
   if (!email || !password) {
-    throw new ApiError('Please provide email and password.', 400);
+    throw new ApiError(
+      'Please provide email and password.',
+      400,
+      RES_CODE.VALIDATION_ERROR,
+    );
   }
 
   const admin = await Admin.findOne({ email });
 
   if (!admin || !(await admin.matchPassword(password))) {
-    throw new ApiError('Invalid email or password.', 401);
+    throw new ApiError(
+      'Invalid email or password.',
+      401,
+      RES_CODE.AUTH_INVALID_CREDENTIALS,
+    );
   }
 
   return {
@@ -31,12 +40,20 @@ export const loginService = async (email, password) => {
  */
 export const forgotPasswordService = async (email) => {
   if (!email) {
-    throw new ApiError('Please provide an email address.', 400);
+    throw new ApiError(
+      'Please provide an email address.',
+      400,
+      RES_CODE.VALIDATION_ERROR,
+    );
   }
 
   const admin = await Admin.findOne({ email });
   if (!admin) {
-    throw new ApiError('No admin found with that email address.', 404);
+    throw new ApiError(
+      'No admin found with that email address.',
+      404,
+      RES_CODE.AUTH_NOT_FOUND,
+    );
   }
 
   const otp = crypto.randomInt(100000, 999999).toString();
@@ -84,6 +101,7 @@ export const forgotPasswordService = async (email) => {
     throw new ApiError(
       'Could not send email at this time. Please try again later or check SMTP settings.',
       500,
+      RES_CODE.EMAIL_SEND_ERROR,
     );
   }
 };
@@ -93,7 +111,11 @@ export const forgotPasswordService = async (email) => {
  */
 export const resetPasswordService = async (email, otp, newPassword) => {
   if (!email || !otp || !newPassword) {
-    throw new ApiError('Please provide email, OTP, and new password.', 400);
+    throw new ApiError(
+      'Please provide email, OTP, and new password.',
+      400,
+      RES_CODE.VALIDATION_ERROR,
+    );
   }
 
   const admin = await Admin.findOne({
@@ -103,7 +125,11 @@ export const resetPasswordService = async (email, otp, newPassword) => {
   });
 
   if (!admin) {
-    throw new ApiError('Invalid or expired OTP.', 400);
+    throw new ApiError(
+      'Invalid or expired OTP.',
+      400,
+      RES_CODE.VALIDATION_ERROR,
+    );
   }
 
   admin.password = newPassword;
