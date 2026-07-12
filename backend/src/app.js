@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import authRoutes from './routes/auth.route.js';
 import reservationRoutes from './routes/reservation.route.js';
 import { RES_CODE } from './constants/responseCode.constant.js';
+import { formatResponse } from './utils/response.util.js';
 
 const app = express();
 
@@ -20,25 +21,31 @@ app.use('/api/auth', authRoutes);
 app.use('/api/reservations', reservationRoutes);
 
 app.use((req, res, next) => {
-  res.status(404).json({
-    code: -1,
-    msg: `API Endpoint Not Found: ${req.originalUrl}`,
-    data: {},
-  });
+  res
+    .status(404)
+    .json(
+      formatResponse(
+        RES_CODE.FAIL,
+        `API Endpoint Not Found: ${req.originalUrl}`,
+      ),
+    );
 });
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
 
-  const code = err.responseCode || RES_CODE.FAIL
+  const code = err.responseCode || RES_CODE.FAIL;
 
-  const errorData = process.env.NODE_ENV === "development" && err.stack ? {stack: err.stack} : {}
+  const errorData =
+    process.env.NODE_ENV === 'development' && err.stack
+      ? { stack: err.stack }
+      : {};
 
-  res.status(statusCode).json({
-    code: code,
-    msg: err.message || 'Internal Server Error',
-    data: errorData,
-  });
+  res
+    .status(statusCode)
+    .json(
+      formatResponse(code, err.message || 'Internal Server Error', errorData),
+    );
 });
 
 export default app;

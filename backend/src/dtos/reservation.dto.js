@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { date, z } from 'zod';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import utc from 'dayjs/plugin/utc.js';
@@ -18,7 +18,11 @@ export const createReservationRequestDto = z
     customerName: zRequiredString('Customer name')
       .trim()
       .min(2, 'Name must be at least 2 characters.')
-      .max(100, 'Customer name is too long.'),
+      .max(100, 'Customer name is too long.')
+      .regex(
+        /^[A-Za-zÀ-ỹ\s'-]+$/,
+        'Customer name contains invalid characters.',
+      ),
     phone: zRequiredString('Phone number')
       .trim()
       .regex(/^[0-9]{10,11}$/, 'Invalid phone number.'),
@@ -44,7 +48,7 @@ export const createReservationRequestDto = z
     const inputDate = dayjs(val.date, 'DD-MM-YYYY', true);
     if (inputDate.isValid() && inputDate.isBefore(now, 'day')) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         path: ['date'],
         message: 'Reservation date cannot be in the past.',
       });
@@ -59,7 +63,7 @@ export const createReservationRequestDto = z
 
     if (!reservation.isValid()) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         path: ['time'],
         message: 'Invalid reservation date or time.',
       });
@@ -68,7 +72,7 @@ export const createReservationRequestDto = z
 
     if (!reservation.isAfter(now)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         path: ['time'],
         message: `Reservation time must be later than the current time (${now.format('hh:mm A')}).`,
       });
@@ -137,6 +141,7 @@ export const updateReservationRequestDto = z
       .trim()
       .min(2, 'Name must be at least 2 characters.')
       .max(100, 'Customer name is too long.')
+      .regex(/^[A-Za-zÀ-ỹ\s'-]+$/, 'Customer name contains invalid characters.')
       .optional(),
     phone: z
       .string()
@@ -156,18 +161,66 @@ export const updateReservationRequestDto = z
         'Time must be in 12-hour format (e.g. 06:30 PM).',
       )
       .optional(),
-    guests: z
-      .string()
+    guests: z.coerce
+      .number()
+      .int()
       .min(1, 'Guests must be at least 1.')
-      .max(500, 'Guests cannot exceed 500.'),
+      .max(500, 'Guests cannot exceed 500.')
+      .optional(),
   })
   .superRefine((val, ctx) => {
-    if ((val.date && !val.time) || (!val.date && val.time)) {
+    if (Object.keys(val).length === 0) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['time'],
-        message:
-          'Both date and time must be provided together to update schedule.',
+        code: 'custom',
+        message: 'At least one field is required',
       });
+      return;
     }
+  })
+  .transform((val) => {
+    const transformed = { ...val };
+
+    if (val.date && val.time) {
+      transformed.reservationTime = dayjs(
+        `${val.date} ${val.time}`,
+        'DD-MM-YYYY hh:mm A',
+        true,
+      ).toDate();
+    }
+
+    if (val.time) {
+      transformed.timeSlot = val.time;
+    }
+
+    return transformed;
   });
+
+/**
+ * @desc Response DTO cho Thông tin tài khoản
+ */
+export class ReservationResponseDto {
+  constructor(reservation) {
+    this.id = reservation._id;
+    this.customerName = reservation.customerName;
+    this.phone = reservation.phone;
+    this.guests = reservation.guests;
+    this.status = reservation.status;
+    this.timeSlot = reservation.timeSlot;
+    this.reservationTime = reservation.reservationTime;
+    this.formattedDate = dayjs(reservation.reservationTime)
+      .tz(TZ)
+      .format('DD-MM-YYYY');
+    this.createdAt = reservation.createdAt;
+    this.updatedAt = reservation.updatedAt;
+  }
+}
+
+export class ReservationListResponseDto {
+  constructor(data) {
+    this.reservations = data.reservations.map(
+      (item) => new ReservationResponseDto(item),
+    );
+
+    this.pagination = data.pagination;
+  }
+}

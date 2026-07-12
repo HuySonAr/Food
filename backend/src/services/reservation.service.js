@@ -5,6 +5,7 @@ import timezone from 'dayjs/plugin/timezone.js';
 import Reservation from '../models/Reservation.js';
 import sendEmail from '../utils/sendEmail.js';
 import ApiError from '../utils/ApiError.js';
+import { RES_CODE } from '../constants/responseCode.constant.js';
 
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
@@ -193,28 +194,143 @@ export const getReservationsService = async (query) => {
 };
 
 /**
+ * @desc    Admin lấy chi tiết đơn đặt bàn
+ */
+export const getReservationByIdService = async (id) => {
+  const reservation = await Reservation.findById(id).lean();
+
+  if (!reservation) {
+    throw new ApiError('Reservation not found.', 404, RES_CODE.RES_NOT_FOUND);
+  }
+
+  return reservation;
+};
+
+/**
  * @desc    Cập nhật trạng thái đơn đặt bàn.
  */
 export const updateReservationStatusService = async (id, status) => {
   const reservation = await Reservation.findById(id);
 
   if (!reservation) {
-    throw new ApiError('Reservation not found.', 404);
+    throw new ApiError('Reservation not found.', 404, RES_CODE.RES_NOT_FOUND);
   }
 
   if (reservation.status === 'completed') {
-    throw new ApiError('Completed reservations cannot be updated.', 400);
+    throw new ApiError(
+      'Completed reservations cannot be updated.',
+      400,
+      RES_CODE.RES_INVALID_STATE,
+    );
   }
 
   if (reservation.status === 'cancelled') {
-    throw new ApiError('Cancelled reservations cannot be updated.', 400);
+    throw new ApiError(
+      'Cancelled reservations cannot be updated.',
+      400,
+      RES_CODE.RES_INVALID_STATE,
+    );
   }
 
   if (reservation.status === status) {
-    throw new ApiError(`Reservation is already ${status}.`, 400);
+    throw new ApiError(
+      `Reservation is already ${status}.`,
+      400,
+      RES_CODE.RES_INVALID_STATE,
+    );
   }
 
   reservation.status = status;
 
   return await reservation.save();
+};
+
+/**
+ * @desc    Cập nhật thông tin đơn đặt bàn.
+ */
+export const updateReservationService = async (id, updateData) => {
+  const reservation = await Reservation.findById(id);
+
+  if (!reservation) {
+    throw new ApiError('Reservation not found.', 404, RES_CODE.RES_NOT_FOUND);
+  }
+
+  if (['completed', 'cancelled'].includes(reservation.status)) {
+    throw new ApiError(
+      `Cannot update a ${reservation.status} reservation.`,
+      400,
+      RES_CODE.RES_INVALID_STATE,
+    );
+  }
+
+  if (
+    (updateData.date && !updateData.time) ||
+    (!updateData.date && updateData.time)
+  ) {
+    throw new ApiError(
+      'Both date and time must be provided together to update the schedule.',
+      400,
+      RES_CODE.VALIDATION_ERROR,
+    );
+  }
+
+  if (updateData.reservationTime) {
+    const TZ = process.env.TIMEZONE || 'Asia/Ho_Chi_Minh';
+    const now = dayjs().tz(TZ);
+    const newReservationTime = dayjs(updateData.reservationTime).tz(TZ);
+
+    if (!newReservationTime.isValid()) {
+      throw new ApiError(
+        'Invalid reservation date or time.',
+        400,
+        RES_CODE.VALIDATION_ERROR,
+      );
+    }
+
+    if (newReservationTime.isBefore(now)) {
+      throw new ApiError(
+        `Reservation time must be later than current time (${now.format('hh:mm A')}).`,
+        400,
+        RES_CODE.VALIDATION_ERROR,
+      );
+    }
+
+    if (updateData.reservationTime || updateData.phone) {
+      const checkPhone = updateData.phone || reservation.phone;
+      const checkTime =
+        updateData.reservationTime || reservation.reservationTime;
+
+      const existedReservation = await Reservation.findOne({
+        _id: { $ne: id },
+        phone: checkPhone,
+        reservationTime: checkTime,
+        status: { $in: ['pending', 'confirmed'] },
+      });
+
+      if (existedReservation) {
+        throw new ApiError(
+          'This customer already has another reservation at the new time.',
+          409,
+          RES_CODE.RES_CONFLICT,
+        );
+      }
+    }
+  }
+
+  delete updateData.date;
+  delete updateData.time;
+
+  Object.assign(reservation, updateData);
+  return await reservation.save();
+};
+
+/**
+ * @desc    Admin xóa đơn đặt bàn (Hard Delete)
+ */
+export const deleteReservationServices = async (id) => {
+  const reservation = await Reservation.findByIdAndDelete(id);
+  if (!reservation) {
+    throw new ApiError('Reservation not found.', 404, RES_CODE.RES_NOT_FOUND);
+  }
+  return { id };
 };

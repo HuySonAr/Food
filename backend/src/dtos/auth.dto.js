@@ -34,6 +34,9 @@ export const resetPasswordRequestDto = z.object({
     .min(6, 'New password must be at least 6 characters long.'),
 });
 
+/**
+ * @desc Response DTO cho Thông tin tài khoản
+ */
 export class AdminResponseDto {
   constructor(admin, token = null) {
     this.id = admin._id;
