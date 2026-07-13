@@ -1,6 +1,7 @@
 import { ZodError } from 'zod';
 import { RES_CODE } from '../constants/responseCode.constant.js';
 import { formatResponse } from '../utils/response.util.js';
+import { deleteFromImageKit } from './upload.middleware.js';
 
 export const validateDto = (schema) => async (req, res, next) => {
   try {
@@ -8,6 +9,10 @@ export const validateDto = (schema) => async (req, res, next) => {
     return next();
   } catch (error) {
     if (error instanceof ZodError) {
+      if (req.imageKitFileId) {
+        await deleteFromImageKit(req.imageKitFileId);
+      }
+
       const zodIssues = error.issues || error.errors || [];
 
       const errorMessage = zodIssues.map((err) => ({

@@ -21,7 +21,7 @@ export const zRequiredString = (fieldName) => {
 };
 
 export const zRequiredNUmber = (fieldName) => {
-  return z.number({
+  return z.coerce.number({
     error: (issue) =>
       issue.input === undefined
         ? `${fieldName} is required.`

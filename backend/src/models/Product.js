@@ -1,5 +1,5 @@
-import{ model, Schema } from 'mongoose';
-import { PRODUCT_CATEGORIES } from '../constants/product.constant';
+import { model, Schema } from 'mongoose';
+import { PRODUCT_CATEGORIES } from '../constants/product.constant.js';
 
 const productSchema = new Schema(
   {
@@ -30,15 +30,26 @@ const productSchema = new Schema(
       required: [true, 'Product image is required.'],
     },
 
+    imageFileId: { 
+      type: String, 
+      required: [true, 'Image file ID is required.'] 
+    },
+
     description: {
       type: String,
       trim: true,
       default: '',
+    },
+    
+    isAvailable: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true },
 );
 
 productSchema.index({ category: 1 });
+productSchema.index({ name: 'text' });
 
 export default model('Product', productSchema);

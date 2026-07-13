@@ -99,7 +99,6 @@ export const getReservationsQueryDto = z.object({
     .number()
     .int('Page must be an integer.')
     .min(1, 'Page must be greater than or equal to 1.')
-    .optional()
     .default(1),
 
   limit: z.coerce
@@ -107,7 +106,6 @@ export const getReservationsQueryDto = z.object({
     .int('Limit must be an integer.')
     .min(1, 'Limit must be at least 1.')
     .max(100, 'Limit cannot exceed 100.')
-    .optional()
     .default(10),
 
   keyword: z.string().trim().max(100, 'Keyword is too long.').optional(),

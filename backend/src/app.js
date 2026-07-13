@@ -4,8 +4,10 @@ import morgan from 'morgan';
 
 import authRoutes from './routes/auth.route.js';
 import reservationRoutes from './routes/reservation.route.js';
+import productRoutes from './routes/product.route.js';
 import { RES_CODE } from './constants/responseCode.constant.js';
 import { formatResponse } from './utils/response.util.js';
+import imagekit from './config/imagekit.js';
 
 const app = express();
 
@@ -19,6 +21,7 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/reservations', reservationRoutes);
+app.use('/api/products', productRoutes);
 
 app.use((req, res, next) => {
   res
