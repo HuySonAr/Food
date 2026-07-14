@@ -1,7 +1,10 @@
 import crypto from 'crypto';
 import Admin from '../models/Admin.js';
 import ApiError from '../utils/ApiError.js';
-import generateToken from '../utils/generateToken.js';
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from '../utils/generateToken.js';
 import sendEmail from '../utils/sendEmail.js';
 import { RES_CODE } from '../constants/responseCode.constant.js';
 
@@ -27,12 +30,66 @@ export const loginService = async (email, password) => {
     );
   }
 
+  const accessToken = generateAccessToken(admin);
+  const refreshToken = generateRefreshToken(admin);
+
+  admin.refreshToken = refreshToken;
+  await admin.save();
+
   return {
-    _id: admin._id,
-    email: admin.email,
-    role: admin.role,
-    token: generateToken(admin._id),
+    admin: {
+      _id: admin._id,
+      email: admin.email,
+      role: admin.role,
+    },
+    accessToken,
+    refreshToken,
   };
+};
+
+export const refreshSessionService = async (token) => {
+  if (!token) {
+    throw new ApiError(
+      'Refresh token is required.',
+      400,
+      RES_CODE.VALIDATION_ERROR,
+    );
+  }
+
+  try {
+    const decoded = verifyRefreshToken(token);
+    const admin = await Admin.findById(decoded.id);
+
+    if (!admin || admin.refreshToken !== token) {
+      throw new ApiError(
+        'Invalid or reuse detected for refresh token.',
+        401,
+        RES_CODE.AUTH_UNAUTHORIZED,
+      );
+    }
+
+    const newAccessToken = generateAccessToken(admin);
+    const newRefreshToken = generateRefreshToken(admin);
+
+    admin.refreshToken = newRefreshToken;
+    await admin.save();
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    };
+  } catch (error) {
+    throw new ApiError(
+      'Refresh token expired or invalid. Please log in again.',
+      401,
+      RES_CODE.AUTH_UNAUTHORIZED,
+    );
+  }
+};
+
+export const logoutService = async (adminId) => {
+  await Admin.findByIdAndUpdate(adminId, { $unset: { refreshToken: 1 } });
+  return { success: true };
 };
 
 /**

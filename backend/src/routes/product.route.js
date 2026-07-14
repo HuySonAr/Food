@@ -1,5 +1,5 @@
 import express from 'express';
-import { protect } from '../middleware/auth.middleware.js';
+import { protect, restrictTo } from '../middleware/auth.middleware.js';
 import {
   rollbackUpload,
   uploadImage,
@@ -32,6 +32,7 @@ router.get('/', validateQueryDto(getPublicProductsQueryDto), getPublicProducts);
 
 // Private
 router.use(protect);
+router.use(restrictTo('admin'));
 
 router.post(
   '/',

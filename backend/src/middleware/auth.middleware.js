@@ -1,21 +1,19 @@
 import { RES_CODE } from '../constants/responseCode.constant.js';
 import Admin from '../models/Admin.js';
 import { formatResponse } from '../utils/response.util.js';
-import verifyToken from '../utils/verifyToken.js';
+import { verifyAccessToken } from '../utils/verifyToken.js';
 
 export const protect = async (req, res, next) => {
   let token;
-
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer ')
   ) {
     try {
       token = req.headers.authorization.split(' ')[1];
-      const decoded = verifyToken(token);
-
+      const decoded = verifyAccessToken(token);
       req.admin = await Admin.findById(decoded.id).select(
-        '-password -resetOtp -resetOtpExpire',
+        '-password -refreshToken -resetOtp -resetOtpExpire',
       );
 
       if (!req.admin) {
@@ -28,7 +26,6 @@ export const protect = async (req, res, next) => {
             ),
           );
       }
-
       return next();
     } catch (error) {
       console.error('JWT Verification Error:', error.message);
@@ -37,7 +34,7 @@ export const protect = async (req, res, next) => {
         .json(
           formatResponse(
             RES_CODE.AUTH_UNAUTHORIZED,
-            'Invalid or expired token. Please log in again.',
+            'Invalid or expired access token.',
           ),
         );
     }
@@ -53,4 +50,20 @@ export const protect = async (req, res, next) => {
         ),
       );
   }
+};
+
+export const restrictTo = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.admin || !allowedRoles.includes(req.admin.role)) {
+      return res
+        .status(403)
+        .json(
+          formatResponse(
+            RES_CODE.AUTH_UNAUTHORIZED,
+            'You do not have permission to perform this action.',
+          ),
+        );
+    }
+    next();
+  };
 };

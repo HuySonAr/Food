@@ -3,9 +3,18 @@ import { AdminResponseDto } from '../dtos/auth.dto.js';
 import {
   forgotPasswordService,
   loginService,
+  logoutService,
+  refreshSessionService,
   resetPasswordService,
 } from '../services/auth.service.js';
 import { formatResponse } from '../utils/response.util.js';
+
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
 
 /**
  * @desc    Đăng nhập Admin
@@ -16,15 +25,65 @@ export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const data = await loginService(email, password);
+    const { admin, accessToken, refreshToken } = await loginService(
+      email,
+      password,
+    );
 
-    const responseData = new AdminResponseDto(data, data.token);
+    res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
+
+    const responseData = new AdminResponseDto(admin, accessToken);
 
     res
       .status(200)
       .json(
         formatResponse(RES_CODE.SUCCESS, 'Login successfully.', responseData),
       );
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Refresh Token
+ * @route   POST /api/auth/refresh
+ * @access  Public
+ */
+export const refresh = async (req, res, next) => {
+  try {
+    console.log("cookies",req.cookies)
+    const token = req.cookies?.refreshToken || req.body.refreshToken;
+    console.log("refresh", token)
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      await refreshSessionService(token);
+
+    res.cookie('refreshToken', newRefreshToken, COOKIE_OPTIONS);
+
+    return res.status(200).json(
+      formatResponse(RES_CODE.SUCCESS, 'Token refreshed successfully.', {
+        accessToken,
+      }),
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Log out
+ * @route   POST /api/auth/logout
+ * @access  Public
+ */
+export const logout = async (req, res, next) => {
+  try {
+    if (req.admin?._id) {
+      await logoutService(req.admin._id);
+    }
+    res.clearCookie('refreshToken', COOKIE_OPTIONS);
+    return res
+      .status(200)
+      .json(formatResponse(RES_CODE.SUCCESS, 'Logged out successfully.'));
   } catch (error) {
     next(error);
   }

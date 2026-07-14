@@ -38,12 +38,13 @@ export const resetPasswordRequestDto = z.object({
  * @desc Response DTO cho Thông tin tài khoản
  */
 export class AdminResponseDto {
-  constructor(admin, token = null) {
-    this.id = admin._id;
+  constructor(admin, accessToken = null) {
+    this.id = admin._id || admin.id;
     this.email = admin.email;
     this.role = admin.role;
-    if (token) {
-      this.token = token;
+
+    if (accessToken) {
+      this.accessToken = accessToken;
     }
   }
 }

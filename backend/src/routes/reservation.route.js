@@ -18,7 +18,7 @@ import {
   updateReservation,
   updateReservationStatus,
 } from '../controllers/reservation.controller.js';
-import { protect } from '../middleware/auth.middleware.js';
+import { protect, restrictTo } from '../middleware/auth.middleware.js';
 import { idParamDto } from '../dtos/common.dto.js';
 
 const router = express.Router();
@@ -28,6 +28,7 @@ router.post('/', validateDto(createReservationRequestDto), createReservation);
 
 // Private
 router.use(protect);
+router.use(restrictTo('admin'));
 
 router.get('/', validateQueryDto(getReservationsQueryDto), getReservations);
 router.get(

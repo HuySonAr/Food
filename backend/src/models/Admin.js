@@ -20,6 +20,9 @@ const adminSchema = new Schema(
       default: 'admin',
       immutable: true,
     },
+    refreshToken: {
+      type: String,
+    },
     resetOtp: {
       type: String,
     },

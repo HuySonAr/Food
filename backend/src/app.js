@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import cookiesParser from 'cookie-parser';
 
 import authRoutes from './routes/auth.route.js';
 import reservationRoutes from './routes/reservation.route.js';
@@ -11,9 +12,15 @@ import imagekit from './config/imagekit.js';
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookiesParser());
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
