@@ -51,9 +51,7 @@ export const login = async (req, res, next) => {
  */
 export const refresh = async (req, res, next) => {
   try {
-    console.log("cookies",req.cookies)
     const token = req.cookies?.refreshToken || req.body.refreshToken;
-    console.log("refresh", token)
 
     const { accessToken, refreshToken: newRefreshToken } =
       await refreshSessionService(token);

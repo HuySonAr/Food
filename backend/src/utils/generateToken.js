@@ -4,14 +4,12 @@ export const generateAccessToken = (admin) => {
   return jwt.sign(
     { id: admin._id, role: admin.role },
     process.env.JWT_ACCESS_SECRET,
-    { expiresIn: process.env.JWT_ACCESS_EXPIRE },
+    { expiresIn: process.env.JWT_ACCESS_EXPIRE || '15m' },
   );
 };
 
 export const generateRefreshToken = (admin) => {
-  return jwt.sign(
-    { id: admin._id }, 
-    process.env.JWT_REFRESH_SECRET, 
-    { expiresIn: process.env.JWT_REFRESH_EXPIRE || '7d' }
-  );
+  return jwt.sign({ id: admin._id }, process.env.JWT_REFRESH_SECRET, {
+    expiresIn: process.env.JWT_REFRESH_EXPIRE || '7d',
+  });
 };

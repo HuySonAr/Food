@@ -12,13 +12,13 @@ import {
   loginRequestDto,
   resetPasswordRequestDto,
 } from '../dtos/auth.dto.js';
-import { protect, restrictTo } from '../middleware/auth.middleware.js';
+import { protect } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
 router.post('/login', validateDto(loginRequestDto), login);
 router.post('/refresh', refresh);
-router.post('/logout', protect, restrictTo('admin'), logout);
+router.post('/logout', protect, logout);
 router.post(
   '/forgot-password',
   validateDto(forgotPasswordRequestDto),
