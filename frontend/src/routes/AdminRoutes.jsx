@@ -11,11 +11,9 @@ const ProtectedAdmin = ({ children }) => {
 
 const AdminRoutes = () => {
   return (
-    <>
-      <Route path="/admin/login" element={<AdminLayout />} />
-
+    <Route path="admin">
+      <Route path="login" element={<h1>Page Login</h1>} />
       <Route
-        path="/admin"
         element={
           <ProtectedAdmin>
             <AdminLayout />
@@ -23,8 +21,9 @@ const AdminRoutes = () => {
         }
       >
         <Route index element={<h1>Dashboard</h1>} />
+        <Route path="products" element={<h1>Manage Products</h1>} />
       </Route>
-    </>
+    </Route>
   );
 };
 
