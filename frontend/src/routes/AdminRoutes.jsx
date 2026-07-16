@@ -1,29 +1,42 @@
-import { Navigate, Route } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import AdminLayout from '../layouts/AdminLayout';
+import { useAuth } from '../context/useAuth';
+import LoginPage from '../pages/admin/LoginPage';
 
-const ProtectedAdmin = ({ children }) => {
-  const isAdmin = localStorage.getItem('role') === 'admin';
-  if (!isAdmin) {
+const ProtectedAdmin = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="p-4 text-center">Đang kiểm tra quyền truy cập...</div>
+    );
+  }
+
+  if (!user) {
     return <Navigate to="/admin/login" replace />;
   }
-  return children;
+
+  if (user.role !== 'admin') {
+    return <Navigate to="/403" replace />;
+  }
+
+  return <Outlet />;
 };
 
 const AdminRoutes = () => {
   return (
-    <Route path="admin">
-      <Route path="login" element={<h1>Page Login</h1>} />
-      <Route
-        element={
-          <ProtectedAdmin>
-            <AdminLayout />
-          </ProtectedAdmin>
-        }
-      >
-        <Route index element={<h1>Dashboard</h1>} />
-        <Route path="products" element={<h1>Manage Products</h1>} />
+    <Routes>
+      {/* Publish */}
+      <Route path="login" element={<LoginPage />} />
+
+      {/* Private */}
+      <Route element={<ProtectedAdmin />}>
+        <Route element={<AdminLayout />}>
+          <Route index element={<h1>Dashboard</h1>} />
+          <Route path="products" element={<h1>Manage Products</h1>} />
+        </Route>
       </Route>
-    </Route>
+    </Routes>
   );
 };
 

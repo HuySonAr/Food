@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   forgotPassword,
+  getMe,
   login,
   logout,
   refresh,
@@ -29,5 +30,6 @@ router.post(
   validateDto(resetPasswordRequestDto),
   resetPassword,
 );
+router.get("/me", protect, getMe)
 
 export default router;

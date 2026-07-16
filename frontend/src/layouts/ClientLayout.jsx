@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import TopBar from '../components/client/layouts/TopBar';
 
 const ClientLayout = () => {
   const listNav = [
@@ -9,7 +10,8 @@ const ClientLayout = () => {
     { name: 'Contact', path: '/contact' },
   ];
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="">
+        <TopBar />
       <header className="flex justify-center items-center gap-10 p-2">
         {listNav.map((item) => (
           <NavLink

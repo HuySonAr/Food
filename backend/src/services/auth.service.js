@@ -7,6 +7,8 @@ import {
 } from '../utils/generateToken.js';
 import sendEmail from '../utils/sendEmail.js';
 import { RES_CODE } from '../constants/responseCode.constant.js';
+import { hashToken } from '../utils/bcrypt.js';
+import { verifyRefreshToken } from '../utils/verifyToken.js';
 
 /**
  * @desc    Admin Login Service
@@ -33,7 +35,7 @@ export const loginService = async (email, password) => {
   const accessToken = generateAccessToken(admin);
   const refreshToken = generateRefreshToken(admin);
 
-  admin.refreshToken = refreshToken;
+  admin.refreshToken = hashToken(refreshToken);
   await admin.save();
 
   return {
@@ -60,7 +62,8 @@ export const refreshSessionService = async (token) => {
     const decoded = verifyRefreshToken(token);
     const admin = await Admin.findById(decoded.id);
 
-    if (!admin || admin.refreshToken !== token) {
+    const hashTokenRefresh = hashToken(token);
+    if (!admin || admin.refreshToken !== hashTokenRefresh) {
       throw new ApiError(
         'Invalid or reuse detected for refresh token.',
         401,
@@ -71,7 +74,7 @@ export const refreshSessionService = async (token) => {
     const newAccessToken = generateAccessToken(admin);
     const newRefreshToken = generateRefreshToken(admin);
 
-    admin.refreshToken = newRefreshToken;
+    admin.refreshToken = hashToken(newRefreshToken);
     await admin.save();
 
     return {
@@ -79,6 +82,10 @@ export const refreshSessionService = async (token) => {
       refreshToken: newRefreshToken,
     };
   } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+
     throw new ApiError(
       'Refresh token expired or invalid. Please log in again.',
       401,

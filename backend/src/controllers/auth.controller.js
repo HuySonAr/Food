@@ -120,3 +120,26 @@ export const resetPassword = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * @desc    Lấy thông tin người dùng Admin
+ * @route   POST /api/auth/me
+ * @access  Private
+ */
+export const getMe = async (req, res, next) => {
+  try {
+    const responseData = new AdminResponseDto(req.admin);
+
+    return res
+      .status(200)
+      .json(
+        formatResponse(
+          RES_CODE.SUCCESS,
+          'Get current admin successfully.',
+          responseData,
+        ),
+      );
+  } catch (error) {
+    next(error);
+  }
+};
