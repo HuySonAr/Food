@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const { login } = useAuth();
 
   const [form, setForm] = useState({ email: '', password: '' });
@@ -14,6 +16,7 @@ const LoginPage = () => {
 
     try {
       await login(form.email, form.password);
+      navigate('/admin');
     } catch (error) {
       console.log(error.response?.data);
       console.log(error.response?.status);

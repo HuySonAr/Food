@@ -13,8 +13,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchUser = async () => {
-    const admin = await getMeService()
-    setUser(admin.data.data)
+    const result = await getMeService()
+    setUser(result.data.data)
   }
 
   useEffect(() => {
@@ -35,8 +35,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const res = await loginService(email, password);
-    console.log("data", res.data.data)
-    const { accessToken, admin } = res.data.data;
+    const { accessToken, ...admin } = res.data.data;
 
     setAccessToken(accessToken);
     setUser(admin);

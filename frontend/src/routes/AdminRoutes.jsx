@@ -1,41 +1,28 @@
-import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import AdminLayout from '../layouts/AdminLayout';
-import { useAuth } from '../context/useAuth';
 import LoginPage from '../pages/admin/LoginPage';
-
-const ProtectedAdmin = () => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="p-4 text-center">Đang kiểm tra quyền truy cập...</div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/admin/login" replace />;
-  }
-
-  if (user.role !== 'admin') {
-    return <Navigate to="/403" replace />;
-  }
-
-  return <Outlet />;
-};
+import TestPage from '../pages/admin/TestPage';
+import ClientOnlyGuard from './ClientOnlyGuard';
+import AdminGuard from './AdminGuard';
 
 const AdminRoutes = () => {
   return (
     <Routes>
-      {/* Publish */}
-      <Route path="login" element={<LoginPage />} />
+      {/* Public*/}
+      <Route element={<ClientOnlyGuard />}>
+        <Route path="login" element={<LoginPage />} />
+      </Route>
 
-      {/* Private */}
-      <Route element={<ProtectedAdmin />}>
+      {/* --- Private */}
+      <Route element={<AdminGuard />}>
         <Route element={<AdminLayout />}>
-          <Route index element={<h1>Dashboard</h1>} />
+          {/* main page is dashboard */}
+          <Route index element={<TestPage />} />
           <Route path="products" element={<h1>Manage Products</h1>} />
         </Route>
       </Route>
+
+      <Route path="*" element={<h1>404 Admin Not Found</h1>} />
     </Routes>
   );
 };
