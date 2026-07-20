@@ -3,6 +3,7 @@ import HeroSection from '@/components/client/home/HeroSection';
 import MenuSection from '@/components/client/home/MenuSection';
 import aboutImage from '../../assets/about-section.jpg';
 import ServiceSection from '@/components/client/home/ServiceSection';
+import ContentSection from '@/components/client/home/ContentSection';
 
 const HomePage = () => {
   return (
@@ -15,6 +16,7 @@ const HomePage = () => {
         buttonShow
       />
       <ServiceSection />
+      <ContentSection />
     </div>
   );
 };
