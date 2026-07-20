@@ -69,7 +69,7 @@ const AboutSection = ({ image, altImage, buttonShow = true }) => {
             {buttonShow && (
               <Button
                 variant="outline"
-                className="h-auto lg:w-fit border-[1.5px] rounded-[118px] px-6 py-3.5 sm:px-8 sm:py-5 border-foreground text-base font-bold"
+                className="h-auto lg:w-fit border-[1.5px] rounded-[118px] px-6 py-3.5 sm:px-8 sm:py-5 border-foreground text-sm sm:text-base font-bold"
               >
                 More About Us
               </Button>
