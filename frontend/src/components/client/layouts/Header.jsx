@@ -62,10 +62,8 @@ const Header = () => {
 
         <div className="lg:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <button className="lg:hidden p-2 rounded-lg text-foreground cursor-pointer">
-                <Menu className="size-6" />
-              </button>
+            <SheetTrigger>
+                <Menu className="size-5 lg:hidden text-foreground cursor-pointer" />
             </SheetTrigger>
 
             <SheetContent showCloseButton={false}>

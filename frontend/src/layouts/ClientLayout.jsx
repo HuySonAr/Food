@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Header from '@/components/client/layouts/Header';
 import TopBar from '@/components/client/layouts/TopBar';
+import Footer from '@/components/client/layouts/Footer';
 
 
 const ClientLayout = () => {
@@ -12,6 +13,8 @@ const ClientLayout = () => {
       <main>
         <Outlet />
       </main>
+
+      <Footer />
     </div>
   );
 };

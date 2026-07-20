@@ -3,7 +3,7 @@ import contentImage1 from '../../../assets/content1.jpg';
 import contentImage2 from '../../../assets/content2.jpg';
 import contentImage3 from '../../../assets/content3.jpg';
 
-export const FEATURES = [
+const FEATURES = [
   {
     icon: Clock4,
     text: 'Delivery within 30 minutes',
@@ -67,10 +67,14 @@ const ContentSection = () => {
               {FEATURES.map(({ icon: Icon, text, rotate }) => (
                 <div key={text} className="flex items-center gap-4 lg:gap-5">
                   <div className="p-1.5 sm:p-1.75 rounded-full text-white bg-primary">
-                    <Icon className={`size-3 sm:size-4 ${rotate && `rotate-90`}`} />
+                    <Icon
+                      className={`size-3 sm:size-4 ${rotate && `rotate-90`}`}
+                    />
                   </div>
 
-                  <h3 className="text-base sm:text-lg lg:text-xl font-medium leading-6.5">{text}</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-medium leading-6.5">
+                    {text}
+                  </h3>
                 </div>
               ))}
             </div>
