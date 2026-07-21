@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import logo from '../../../assets/logo.svg';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
@@ -21,10 +21,16 @@ const listNav = [
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="">
+    <div className="sticky top-0 bg-white z-20 shadow">
       <div className="flex items-center justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 2xl:px-0 py-4 md:py-6 lg:py-7.5">
         {/* Logo */}
-        <div className="flex items-center gap-2">
+        <Link
+          to="/"
+          onClick={() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="flex items-center gap-2"
+        >
           <img
             src={logo}
             alt="Food Logo"
@@ -33,7 +39,7 @@ const Header = () => {
           <span className="font-serif text-2xl md:text-3xl lg:text-[43px] text-secondary font-semibold italic lg:leading-7.5 tracking-[-0.4px]">
             Bistro Bliss
           </span>
-        </div>
+        </Link>
 
         {/* nav */}
         <div className="hidden lg:flex items-center gap-1 xl:gap-2">
@@ -63,13 +69,17 @@ const Header = () => {
         <div className="lg:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger>
-                <Menu className="size-5 lg:hidden text-foreground cursor-pointer" />
+              <Menu className="size-5 lg:hidden text-foreground cursor-pointer" />
             </SheetTrigger>
 
             <SheetContent showCloseButton={false}>
               <SheetHeader>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1">
+                  <Link
+                    to="/"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-1"
+                  >
                     <img
                       src={logo}
                       alt="Food Logo"
@@ -78,7 +88,7 @@ const Header = () => {
                     <span className="font-serif text-xl text-secondary font-semibold italic">
                       Bistro Bliss
                     </span>
-                  </div>
+                  </Link>
 
                   <button
                     onClick={() => setIsOpen(false)}
