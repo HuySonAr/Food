@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import HomePage from '@/pages/public/HomePage';
 import ClientLayout from '@/layouts/ClientLayout';
 import AboutPage from '@/pages/public/AboutPage';
+import MenuPage from '@/pages/public/MenuPage';
 
 const ClientRoutes = () => {
   return (
@@ -9,7 +10,7 @@ const ClientRoutes = () => {
       <Route path="/" element={<ClientLayout />}>
         <Route index element={<HomePage />} />
         <Route path="about" element={<AboutPage />} />
-        <Route path="menu" element={<h1>Menu</h1>} />
+        <Route path="menu" element={<MenuPage />} />
         <Route path="blog" element={<h1>Blog</h1>} />
         <Route path="blog/:slug" element={<h1>Blog details</h1>} />
         <Route path="contact" element={<h1>Contact</h1>} />

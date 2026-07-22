@@ -3,29 +3,57 @@ import ApiError from '../utils/ApiError.js';
 import { RES_CODE } from '../constants/responseCode.constant.js';
 import { toFile } from '@imagekit/nodejs';
 import imagekit from '../config/imagekit.js';
+import sharp from 'sharp';
+import crypto from "crypto"
 
 const storage = multer.memoryStorage();
 
+const MAX_FILE_SIZE = 12 * 1024 * 1024;
+
+const ALLOWED_MIME_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+];
+
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
-  } else {
-    cb(
-      new ApiError(
-        'Only image files (JPG, PNG, WEBP) are allowed!',
-        400,
-        RES_CODE.VALIDATION_ERROR,
-      ),
-      false,
-    );
+  if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+    return cb(null, true);
   }
+
+  return cb(
+    new ApiError(
+      'Only JPG, JPEG, PNG and WEBP images are allowed.',
+      400,
+      RES_CODE.VALIDATION_ERROR,
+    ),
+  );
 };
 
 export const uploadImage = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: MAX_FILE_SIZE,
+  },
 });
+
+const optimizeImage = async (buffer) => {
+  return sharp(buffer)
+    .rotate()
+    .resize({
+      width: 1200,
+      height: 1200,
+      fit: 'inside',
+      withoutEnlargement: true,
+    })
+    .webp({
+      quality: 80,
+      effort: 3,
+    })
+    .toBuffer();
+};
 
 export const uploadToImageKit = ({
   folder = '/general',
@@ -39,15 +67,14 @@ export const uploadToImageKit = ({
     }
 
     try {
-      const fileToUpload = await toFile(req.file.buffer, req.file.originalname);
+      const compressedBuffer = await optimizeImage(req.file.buffer);
+
+      const fileName = `${prefix}_${Date.now()}_${crypto.randomUUID()}.webp`;
 
       const response = await imagekit.files.upload({
-        file: fileToUpload,
-        fileName: `${prefix}_${Date.now()}_${req.file.originalname}`,
-        folder: folder,
-        transformation: {
-          pre: 'w-800,q-80',
-        },
+        file: await toFile(compressedBuffer, fileName),
+        fileName,
+        folder,
       });
 
       req.body[req.file.fieldname] = response.url;
@@ -57,6 +84,7 @@ export const uploadToImageKit = ({
       req.file.buffer = null;
       next();
     } catch (error) {
+      console.error('[ImageKit Upload Error]', error);
       return next(
         new ApiError(
           'Image upload failed. Please try again later.',
