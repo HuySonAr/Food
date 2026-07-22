@@ -3,6 +3,7 @@ import HomePage from '@/pages/public/HomePage';
 import ClientLayout from '@/layouts/ClientLayout';
 import AboutPage from '@/pages/public/AboutPage';
 import MenuPage from '@/pages/public/MenuPage';
+import ContactPage from '@/pages/public/ContactPage';
 
 const ClientRoutes = () => {
   return (
@@ -13,7 +14,7 @@ const ClientRoutes = () => {
         <Route path="menu" element={<MenuPage />} />
         <Route path="blog" element={<h1>Blog</h1>} />
         <Route path="blog/:slug" element={<h1>Blog details</h1>} />
-        <Route path="contact" element={<h1>Contact</h1>} />
+        <Route path="contact" element={<ContactPage />} />
         <Route path="book" element={<h1>Book a table</h1>} />
       </Route>
       <Route path="*" element={<h1>Not Found</h1>} />

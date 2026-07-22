@@ -57,6 +57,7 @@
   --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
   --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  --shadow-form: 0px 2.98px 59.57px 0px hsla(0, 0%, 0%, 0.08);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }
@@ -165,6 +166,7 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+  --shadow-form: var(--shadow-form);
 }
 
 @layer base {
