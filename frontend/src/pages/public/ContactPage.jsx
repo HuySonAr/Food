@@ -2,7 +2,8 @@ import FormContact from '@/components/client/contact/FormContact';
 
 const ContactPage = () => {
   return (
-    <div className="bg-linear-to-b from-secondary-foreground from-50% to-transparent to-50% flex flex-col items-center gap-12 md:gap-18 py-12 md:py-30 px-4 md:px-8">
+    <div className="relative flex flex-col items-center gap-12 md:gap-18 py-12 md:py-30 px-4 md:px-8">
+      <div className="absolute inset-0 -z-20 bg-linear-to-b from-secondary-foreground from-50% to-transparent to-50%" />
       <div className="flex flex-col gap-4 sm:gap-6 items-center">
         <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[100px] text-foreground font-normal tracking-normal">
           Contact Us
