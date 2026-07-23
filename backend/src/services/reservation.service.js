@@ -130,9 +130,11 @@ export const createReservationService = async (data) => {
     html: emailHtml,
   };
 
-  sendEmail(options).catch((err) => {
-    console.error('Background Email Sending Error:', err.message);
-  });
+  try {
+    await sendEmail(options);
+  } catch (err) {
+    console.error('Background Email Sending Error:', err);
+  }
 
   return reservation;
 };

@@ -26,6 +26,22 @@ const FormContact = () => {
     clearFieldError(name);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+
+      const form = e.currentTarget;
+      const focusableElements = Array.from(
+        form.querySelectorAll('input, textarea, button[type="submit"]'),
+      );
+
+      const index = focusableElements.indexOf(e.target);
+      if (index > -1 && index < focusableElements.length - 1) {
+        focusableElements[index + 1].focus();
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -41,6 +57,7 @@ const FormContact = () => {
   return (
     <form
       onSubmit={handleSubmit}
+      onKeyDown={handleKeyDown}
       className="p-6 md:p-10 flex flex-col gap-6 shadow-form w-full rounded-2xl bg-white"
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

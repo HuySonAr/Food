@@ -1,30 +1,31 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
+const resend = new Resend(process.env.RESEND_API_KEY);
 /**
- * Tiện ích gửi email thông qua Nodemailer & SMTP
+ * Tiện ích gửi email thông qua Resend
  * @param {Object} options - Đối tượng chứa thông tin gửi { email, subject, message }
  */
 const sendEmail = async (options) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.example.com',
-    port: process.env.SMTP_PORT || 465,
-    secure: true,
-    service: process.env.SMTP_SERVICE || 'gmail',
-    auth: {
-      user: process.env.SMTP_MAIL,
-      pass: process.env.SMTP_PASSWORD,
-    },
-  });
+  try {
+    const mailOptions = {
+      from: `"Restaurant Admin Dashboard" <onboarding@resend.dev>`,
+      to: options.email,
+      subject: options.subject,
+      text: options.message,
+      html: options.html,
+    };
+    const { error, data } = await resend.emails.send(mailOptions);
+    if (error) {
+      console.error('--- RESEND EMAIL ERROR ---', error);
+      throw new Error(error.message);
+    }
 
-  const mailOptions = {
-    from: `"Restaurant Admin Dashboard" <${process.env.SMTP_MAIL}>`,
-    to: options.email,
-    subject: options.subject,
-    text: options.message,
-    html: options.html
-  };
-
-  await transporter.sendMail(mailOptions);
+    console.log('--- EMAIL SENT SUCCESSFULLY VIA RESEND ---', data.id);
+    return data;
+  } catch (error) {
+    console.error('--- FAILED TO SEND EMAIL ---', error);
+    throw error;
+  }
 };
 
 export default sendEmail;

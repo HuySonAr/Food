@@ -46,22 +46,17 @@ export const createContactService = async (data) => {
     </div>
   `;
 
+  const options = {
+    email: adminEmail,
+    subject: `[New Contact] ${contact.subject} - From: ${contact.name}`,
+    message: `You have a new message from client ${contact.name}: ${contact.message}`,
+    html: emailHtml,
+  };
+
   try {
-    await sendEmail({
-      email: adminEmail,
-      subject: `[New Contact] ${contact.subject} - From: ${contact.name}`,
-      message: `You have a new message from client ${contact.name}: ${contact.message}`,
-      html: emailHtml,
-    });
-    console.log('--- GỬI MAIL THÀNH CÔNG TRÊN PROD ---');
+    await sendEmail(options);
   } catch (err) {
-    // Log toàn bộ chi tiết lỗi của Nodemailer
-    console.error('--- LỖI GỬI MAIL PROD ---');
-    console.error('Message:', err.message);
-    console.error('Code:', err.code);
-    console.error('Command:', err.command);
-    console.error('Response:', err.response);
-    console.error('Full Error:', err);
+    console.error('Background Contact Email Sending Error:', err);
   }
 
   return contact;

@@ -134,7 +134,7 @@ export const forgotPasswordService = async (email) => {
         <p>Hello <strong>Administrator</strong>,</p>
         <p>You recently requested to reset your password for the Restaurant Admin Dashboard. Here is your One-Time Password (OTP):</p>
         <div style="background-color: #f8f9fa; padding: 15px; text-align: center; margin: 20px 0; border-radius: 5px;">
-          <span style="font-size: 28px; font-weight: bold; letter-spacing: 5px; color: #333;">${options.otp}</span>
+          <span style="font-size: 28px; font-weight: bold; letter-spacing: 5px; color: #333;">${otp}</span>
         </div>
         <p style="color: #777; font-size: 14px;"><em>* This OTP is valid for <strong>5 minutes</strong>. Do not share this code with anyone.</em></p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
@@ -148,9 +148,7 @@ export const forgotPasswordService = async (email) => {
       html: emailHtml,
     };
 
-    sendEmail(options).catch((err) => {
-      console.error('Background Email Sending Error:', err.message);
-    });
+    await sendEmail(options)
 
     return {
       success: true,
@@ -161,7 +159,7 @@ export const forgotPasswordService = async (email) => {
     admin.resetOtpExpire = undefined;
     await admin.save({ validateBeforeSave: false });
 
-    console.error('Nodemailer Error:', error);
+    console.error('Email Sending Error:', error);
     throw new ApiError(
       'Could not send email at this time. Please try again later or check SMTP settings.',
       500,
