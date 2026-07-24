@@ -13,6 +13,9 @@ dayjs.extend(timezone);
 const TZ = process.env.TIMEZONE || 'Asia/Ho_Chi_Minh';
 dayjs.tz.setDefault(TZ);
 
+const TIME_24H_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
+const TIME_ERROR_MSG = 'Time must be in 24-hour format (e.g. 17:30).';
+
 export const createReservationRequestDto = z
   .object({
     customerName: zRequiredString('Customer name')
@@ -27,16 +30,12 @@ export const createReservationRequestDto = z
       .trim()
       .regex(/^[0-9]{10,11}$/, 'Invalid phone number.'),
     date: zRequiredString('Reservation date').regex(
-      /^\d{2}-\d{2}-\d{4}$/,
-      'Date must be in DD-MM-YYYY format.',
+      /^\d{4}-\d{2}-\d{2}$/,
+      'Date must be in YYYY-MM-DD format (e.g. 2026-07-25).',
     ),
     time: zRequiredString('Reservation time')
       .trim()
-      .toUpperCase()
-      .regex(
-        /^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/,
-        'Time must be in 12-hour format (e.g. 06:30 PM).',
-      ),
+      .regex(TIME_24H_REGEX, TIME_ERROR_MSG),
     guests: zRequiredNUmber('Number of guests')
       .int()
       .min(1, 'Guests must be at least 1.')
@@ -45,7 +44,7 @@ export const createReservationRequestDto = z
   .superRefine((val, ctx) => {
     const now = dayjs();
 
-    const inputDate = dayjs(val.date, 'DD-MM-YYYY', true);
+    const inputDate = dayjs(val.date, 'YYYY-MM-DD', true);
     if (inputDate.isValid() && inputDate.isBefore(now, 'day')) {
       ctx.addIssue({
         code: 'custom',
@@ -57,7 +56,7 @@ export const createReservationRequestDto = z
 
     const reservation = dayjs(
       `${val.date} ${val.time}`,
-      'DD-MM-YYYY hh:mm A',
+      'YYYY-MM-DD HH:mm',
       true,
     );
 
@@ -81,7 +80,7 @@ export const createReservationRequestDto = z
   .transform((val) => {
     const combinedDate = dayjs(
       `${val.date} ${val.time}`,
-      'DD-MM-YYYY hh:mm A',
+      'YYYY-MM-DD HH:mm',
       true,
     ).toDate();
 
@@ -112,15 +111,7 @@ export const getReservationsQueryDto = z.object({
 
   status: z.enum(STATUS_RESERVATIONS).optional(),
 
-  time: z
-    .string()
-    .trim()
-    .toUpperCase()
-    .regex(
-      /^(0[1-9]|1[0-2]):[0-5][0-9]\s(AM|PM)$/,
-      'Time must be in 12-hour format (e.g. 06:30 PM).',
-    )
-    .optional(),
+  time: z.string().trim().regex(TIME_24H_REGEX, TIME_ERROR_MSG).optional(),
 
   sort: z.enum(['asc', 'desc']).default('asc'),
 });
@@ -148,17 +139,9 @@ export const updateReservationRequestDto = z
       .optional(),
     date: z
       .string()
-      .regex(/^\d{2}-\d{2}-\d{4}$/, 'Date must be in DD-MM-YYYY format.')
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format.')
       .optional(),
-    time: z
-      .string()
-      .trim()
-      .toUpperCase()
-      .regex(
-        /^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/,
-        'Time must be in 12-hour format (e.g. 06:30 PM).',
-      )
-      .optional(),
+    time: z.string().trim().regex(TIME_24H_REGEX, TIME_ERROR_MSG).optional(),
     guests: z.coerce
       .number()
       .int()
@@ -181,7 +164,7 @@ export const updateReservationRequestDto = z
     if (val.date && val.time) {
       transformed.reservationTime = dayjs(
         `${val.date} ${val.time}`,
-        'DD-MM-YYYY hh:mm A',
+        'YYYY-MM-DD HH:mm',
         true,
       ).toDate();
     }

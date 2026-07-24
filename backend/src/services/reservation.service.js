@@ -36,7 +36,7 @@ export const createReservationService = async (data) => {
   const localReservationTime = dayjs(reservation.reservationTime).tz(TZ);
 
   const reservationDate = localReservationTime.format('DD-MM-YYYY');
-  const reservationHour = localReservationTime.format('hh:mm A');
+  const reservationHour = localReservationTime.format('HH:mm');
 
   const adminEmail = process.env.ADMIN_EMAIL;
   const linkDashboard = process.env.LINK_DASHBOARD;
@@ -291,7 +291,7 @@ export const updateReservationService = async (id, updateData) => {
 
     if (newReservationTime.isBefore(now)) {
       throw new ApiError(
-        `Reservation time must be later than current time (${now.format('hh:mm A')}).`,
+        `Reservation time must be later than current time (${now.format('HH:mm')}).`,
         400,
         RES_CODE.VALIDATION_ERROR,
       );

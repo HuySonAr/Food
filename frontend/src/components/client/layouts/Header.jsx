@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import logo from '../../../assets/logo.svg';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
@@ -20,8 +20,13 @@ const listNav = [
 ];
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const handleBook = () => {
+    navigate('/book');
+    setIsOpen(false);
+  };
   return (
-    <div className="sticky top-0 bg-white z-20 shadow">
+    <div className="sticky top-0 bg-white z-30 shadow">
       <div className="flex items-center justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 2xl:px-0 py-4 md:py-6 lg:py-7.5">
         {/* Logo */}
         <Link
@@ -59,6 +64,7 @@ const Header = () => {
         {/* Button Book */}
         <div className="hidden lg:block">
           <Button
+            onClick={handleBook}
             variant="outline"
             className="h-auto px-5 py-2.5 lg:px-6 lg:py-3 rounded-[118px] text-[#182226] text-sm lg:text-base font-bold tracking-normal leading-6 border-[1.5px] border-foreground cursor-pointer"
           >
@@ -121,6 +127,7 @@ const Header = () => {
 
               <SheetFooter>
                 <Button
+                  onClick={handleBook}
                   variant="outline"
                   className="h-auto py-3 rounded-[118px] text-black text-base font-bold tracking-normal leading-6 border-[1.5px] border-foreground cursor-pointer"
                 >
