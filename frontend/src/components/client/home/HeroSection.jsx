@@ -7,6 +7,9 @@ const HeroSection = () => {
   const handleToMenu = () => {
     navigate('/menu');
   };
+  const handleBook = () => {
+    navigate('/book');
+  };
   return (
     <div
       className="relative w-full min-h-150 md:min-h-175 lg:min-h-200 flex items-center justify-center bg-cover bg-center bg-no-repeat px-4 py-16 sm:py-20"
@@ -22,7 +25,10 @@ const HeroSection = () => {
         </p>
 
         <div className="flex flex-wrap items-center gap-3 sm:gap-4 w-full sm:w-auto">
-          <Button className="w-full sm:w-auto h-auto px-6 py-3.5 sm:px-8 sm:py-5 rounded-[118px] text-sm sm:text-base font-bold leading-6 tracking-normal cursor-pointer">
+          <Button
+            onClick={handleBook}
+            className="w-full sm:w-auto h-auto px-6 py-3.5 sm:px-8 sm:py-5 rounded-[118px] text-sm sm:text-base font-bold leading-6 tracking-normal cursor-pointer"
+          >
             Book A Table
           </Button>
           <Button
