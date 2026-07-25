@@ -26,7 +26,7 @@ const Header = () => {
     setIsOpen(false);
   };
   return (
-    <div className="sticky top-0 bg-white z-30 shadow">
+    <div className="sticky top-0 bg-white z-100 shadow">
       <div className="flex items-center justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 2xl:px-0 py-4 md:py-6 lg:py-7.5">
         {/* Logo */}
         <Link
@@ -75,7 +75,7 @@ const Header = () => {
         <div className="lg:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger>
-              <Menu className="size-5 lg:hidden text-foreground cursor-pointer" />
+              <Menu className="size-6 lg:hidden text-foreground cursor-pointer" />
             </SheetTrigger>
 
             <SheetContent showCloseButton={false}>
@@ -99,9 +99,9 @@ const Header = () => {
                   <button
                     onClick={() => setIsOpen(false)}
                     type="button"
-                    className="p-2 text-black cursor-pointer"
+                    className="p-2 cursor-pointer"
                   >
-                    <PanelRightClose className="size-5" />
+                    <PanelRightClose className="size-6 text-foreground" />
                   </button>
                 </div>
               </SheetHeader>

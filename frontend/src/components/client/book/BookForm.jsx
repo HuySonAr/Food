@@ -5,6 +5,7 @@ import CustomSelect from './CustomSelect';
 import { useReservation } from '@/hooks/useReservation';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import CustomDatePicker from './CustomDatePicker';
 
 const initialForm = {
   date: '',
@@ -52,12 +53,11 @@ const BookForm = () => {
         <div className="flex flex-col gap-2">
           <label className="text-sm md:text-base font-bold">Date</label>
           <div className="flex flex-col gap-1">
-            <input
-              type="date"
+            <CustomDatePicker
+              name="date"
               value={formData.date}
-              onChange={(e) => handleChange('date', e.target.value)}
-              required
-              className="py-3 md:py-4 px-4 sm:px-6 text-sm sm:text-base border rounded-[72px] w-full"
+              placeholder="Pick a date"
+              onChange={handleChange}
             />
             {errorField.date && (
               <p className="text-xs sm:text-sm text-destructive pl-4 sm:pl-6">

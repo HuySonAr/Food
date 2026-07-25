@@ -42,9 +42,9 @@ export const createReservationRequestDto = z
       .max(500, 'Guests cannot exceed 500.'),
   })
   .superRefine((val, ctx) => {
-    const now = dayjs();
+    const now = dayjs().tz(TZ);
 
-    const inputDate = dayjs(val.date, 'YYYY-MM-DD', true);
+    const inputDate = dayjs.tz(val.date, 'YYYY-MM-DD', TZ);
     if (inputDate.isValid() && inputDate.isBefore(now, 'day')) {
       ctx.addIssue({
         code: 'custom',
@@ -54,10 +54,10 @@ export const createReservationRequestDto = z
       return;
     }
 
-    const reservation = dayjs(
+    const reservation = dayjs.tz(
       `${val.date} ${val.time}`,
       'YYYY-MM-DD HH:mm',
-      true,
+      TZ,
     );
 
     if (!reservation.isValid()) {
@@ -78,10 +78,10 @@ export const createReservationRequestDto = z
     }
   })
   .transform((val) => {
-    const combinedDate = dayjs(
+    const combinedDate = dayjs.tz(
       `${val.date} ${val.time}`,
       'YYYY-MM-DD HH:mm',
-      true,
+      TZ,
     ).toDate();
 
     return {
@@ -162,10 +162,10 @@ export const updateReservationRequestDto = z
     const transformed = { ...val };
 
     if (val.date && val.time) {
-      transformed.reservationTime = dayjs(
+      transformed.reservationTime = dayjs.tz(
         `${val.date} ${val.time}`,
         'YYYY-MM-DD HH:mm',
-        true,
+        TZ,
       ).toDate();
     }
 
