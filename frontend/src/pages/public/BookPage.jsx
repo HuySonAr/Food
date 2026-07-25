@@ -22,6 +22,8 @@ const BookPage = () => {
       <div className="w-full max-w-3xl">
         <BookForm />
       </div>
+
+      <div className="h-[30vh]"></div>
     </div>
   );
 };

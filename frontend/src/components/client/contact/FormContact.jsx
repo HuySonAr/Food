@@ -91,7 +91,7 @@ const FormContact = () => {
               onChange={handleChange}
               placeholder="Enter email address"
               required
-              className="py-3 md:py-4 px-4 md:px-6 text-sm md:text-base border rounded-[72px] w-full"
+              className="py-3 md:py-4 px-4 md:px-6 text-sm sm:text-base border rounded-[72px] w-full"
             />
 
             {errorField.email && (
@@ -112,7 +112,7 @@ const FormContact = () => {
             value={formData.subject}
             onChange={handleChange}
             placeholder="Write a subject"
-            className="py-3 md:py-4 px-4 md:px-6 text-sm md:text-base border rounded-[72px] w-full"
+            className="py-3 md:py-4 px-4 md:px-6 text-sm sm:text-base border rounded-[72px] w-full"
           />
           {errorField.subject && (
             <p className="text-xs sm:text-sm text-destructive pl-4 sm:pl-6">
@@ -131,7 +131,7 @@ const FormContact = () => {
             onChange={handleChange}
             placeholder="Write your message"
             required
-            className="py-4 md:py-6 px-4 md:px-6 text-sm md:text-base border rounded-2xl min-h-30 md:min-h-40 w-full resize-y"
+            className="py-4 md:py-6 px-4 md:px-6 text-sm sm:text-base border rounded-2xl min-h-30 md:min-h-40 w-full resize-y"
           />
           {errorField.message && (
             <p className="text-xs sm:text-sm text-destructive pl-4 sm:pl-6">
