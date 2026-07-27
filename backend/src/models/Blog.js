@@ -1,38 +1,5 @@
 import { Schema, model } from 'mongoose';
-
-const sectionSchema = new Schema(
-  {
-    heading: {
-      type: String,
-      required: [true, 'Section heading is required.'],
-      trim: true,
-    },
-
-    content: {
-      type: String,
-      required: [true, 'Section content is required.'],
-      trim: true,
-    },
-
-    steps: {
-      type: [
-        {
-          type: String,
-          trim: true,
-        },
-      ],
-      default: [],
-    },
-
-    image: {
-      type: String,
-      default: '',
-    },
-  },
-  {
-    _id: false,
-  },
-);
+import slugify from 'slugify';
 
 const blogSchema = new Schema(
   {
@@ -41,33 +8,54 @@ const blogSchema = new Schema(
       required: [true, 'Blog title is required.'],
       trim: true,
     },
-
     slug: {
       type: String,
-      required: [true, 'Slug is required.'],
       unique: true,
-      trim: true,
-      lowercase: true,
+      index: true,
     },
-
-    thumbnail: {
+    description: {
       type: String,
-      required: [true, 'Thumbnail is required.'],
+      required: [true, 'Description is required.'],
+      trim: true,
+      maxlength: [500, 'Description cannot exceed 500 characters.'],
     },
-
-    sections: {
-      type: [sectionSchema],
-      required: [true, 'Blog sections are required.'],
+    coverImage: {
+      type: String,
+      required: [true, 'Cover image is required.'],
+    },
+    coverImageFileId: {
+      type: String,
+      required: [true, 'Cover image file ID is required.'],
+    },
+    content: {
+      type: String,
+      required: [true, 'Content (HTML string) is required.'],
+    },
+    author: {
+      type: Schema.Types.ObjectId,
+      ref: 'Admin',
+      required: true,
+    },
+    isPublished: {
+      type: Boolean,
+      default: false,
     },
   },
-  {
+  { 
     timestamps: true,
     versionKey: false,
-  },
+  }
 );
 
-blogSchema.index({
-  slug: 1,
+
+blogSchema.pre('save', function () {
+  if (this.isModified('title') || !this.slug) {
+    this.slug = slugify(this.title, {
+      lower: true,
+      strict: true,
+      locale: 'vi',
+    });
+  }
 });
 
 export default model('Blog', blogSchema);

@@ -78,7 +78,10 @@ export const uploadToImageKit = ({
       });
 
       req.body[req.file.fieldname] = response.url;
-      req.body.imageFileId = response.fileId;
+
+      const dynamicFileIdKey = `${req.file.fieldname}FileId`;
+      req.body[dynamicFileIdKey] = response.fileId;
+      
       req.imageKitFileId = response.fileId;
 
       req.file.buffer = null;

@@ -2,14 +2,18 @@ import { RES_CODE } from '../constants/responseCode.constant.js';
 import { deleteFromImageKit } from '../middleware/upload.middleware.js';
 import Product from '../models/Product.js';
 import ApiError from '../utils/ApiError.js';
+import { escapeRegex } from '../utils/escapeRegex.js';
 
 /**
  * @desc Admin: Thêm món ăn mới
  */
 export const createProductService = async (data) => {
+  const escapedName = escapeRegex(data.name.trim());
+
   const existingProduct = await Product.findOne({
-    name: { $regex: `^${data.name}$`, $options: 'i' },
+    name: { $regex: `^${escapedName}$`, $options: 'i' },
   });
+
   if (existingProduct) {
     throw new ApiError(
       'A product with this name already exists.',
@@ -101,13 +105,13 @@ export const getAdminProductsService = async (query) => {
 /**
  * @desc Lấy thông tin sản phẩm bằng Id
  */
-export const getProductByIdService = async(id) => {
-  const product = Product.findById(id).lean()
-  if(!product){
+export const getProductByIdService = async (id) => {
+  const product = await Product.findById(id).lean();
+  if (!product) {
     throw new ApiError('Product not found.', 404, RES_CODE.RES_NOT_FOUND);
   }
   return product;
-}
+};
 
 /**
  * @desc Admin: Cập nhật thông tin sản phẩm
@@ -122,9 +126,7 @@ export const updateProductService = async (id, updateData) => {
     updateData.name &&
     updateData.name.trim().toLowerCase() !== product.name.toLowerCase()
   ) {
-    const escapedName = updateData.name
-      .trim()
-      .replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedName = escapeRegex(updateData.name.trim());
     const duplicateProduct = await Product.findOne({
       _id: { $ne: id },
       name: { $regex: `^${escapedName}$`, $options: 'i' },

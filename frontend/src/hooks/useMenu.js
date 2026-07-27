@@ -25,7 +25,6 @@ export const useMenu = (category = 'all', page = 1, limit = 8) => {
         setPagination(response.data.pagination);
         setErorr(null);
       } catch (err) {
-        console.log('error', err.response.data);
         setErorr(err.response?.data?.msg);
       } finally {
         setLoading(false);

@@ -26,6 +26,7 @@ export const validateDto = (schema) => async (req, res, next) => {
         }),
       );
     }
+    return next(error)
   }
 };
 

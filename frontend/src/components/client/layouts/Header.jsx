@@ -53,7 +53,7 @@ const Header = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `text-base font-medium leading-6 tracking-normal px-4 py-1 rounded-[34px] ${isActive ? 'bg-accent' : ''}`
+                `text-base font-medium leading-6 tracking-normal px-4 py-1 rounded-[34px] hover:bg-accent/30 ${isActive ? 'bg-accent' : ''}`
               }
             >
               {item.name}
