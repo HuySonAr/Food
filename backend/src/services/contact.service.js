@@ -2,6 +2,7 @@ import Contact from '../models/Contact.js';
 import ApiError from '../utils/ApiError.js';
 import sendEmail from '../utils/sendEmail.js';
 import { RES_CODE } from '../constants/responseCode.constant.js';
+import { escapeRegex } from '../utils/escapeRegex.js';
 
 /**
  * @desc Khách hàng gửi form liên hệ -> Lưu DB + Gửi mail Admin
@@ -74,6 +75,7 @@ export const getContactsService = async (query) => {
   }
 
   if (keyword) {
+    const escapedKeyword = escapeRegex(keyword.trim())
     filter.$or = [
       { name: { $regex: keyword, $options: 'i' } },
       { email: { $regex: keyword, $options: 'i' } },

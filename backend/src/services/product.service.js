@@ -64,7 +64,7 @@ export const getAdminProductsService = async (query) => {
   const filter = {};
 
   if (keyword) {
-    const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedKeyword = escapeRegex(keyword.trim())
     filter.name = { $regex: escapedKeyword, $options: 'i' };
   }
 

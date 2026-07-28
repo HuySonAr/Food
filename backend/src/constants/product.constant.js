@@ -1,9 +1,13 @@
 export const PRODUCT_CATEGORIES = [
-  'all',
   'breakfast',
   'main dishes',
   'desserts',
   'drinks',
+];
+
+export const FILTER_PRODUCT_CATEGORIES = [
+  'all',
+  ...PRODUCT_CATEGORIES,
 ];
 
 export const PRODUCT_STATUS = ['true', 'false', 'all'];

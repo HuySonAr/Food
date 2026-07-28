@@ -6,6 +6,7 @@ import Reservation from '../models/Reservation.js';
 import sendEmail from '../utils/sendEmail.js';
 import ApiError from '../utils/ApiError.js';
 import { RES_CODE } from '../constants/responseCode.constant.js';
+import { escapeRegex } from '../utils/escapeRegex.js';
 
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
@@ -155,6 +156,7 @@ export const getReservationsService = async (query) => {
   }
 
   if (keyword) {
+    const escapedKeyword = escapeRegex(keyword.trim());
     filter.$or = [
       {
         customerName: {

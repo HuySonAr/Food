@@ -1,5 +1,6 @@
 import { RES_CODE } from '../constants/responseCode.constant.js';
 import { BlogListResponseDto, BlogResponseDto } from '../dtos/blog.dto.js';
+import TempUpload from '../models/TempUpload.js';
 import {
   createBlogService,
   deleteBlogService,

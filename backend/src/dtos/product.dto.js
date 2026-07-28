@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { zRequiredNUmber, zRequiredString } from '../utils/zod.util.js';
 import {
+  FILTER_PRODUCT_CATEGORIES,
   PRODUCT_CATEGORIES,
   PRODUCT_PRICES,
   PRODUCT_STATUS,
@@ -57,7 +58,7 @@ export const getPublicProductsQueryDto = z.object({
     .max(100, 'Limit cannot exceed 100.')
     .default(8),
 
-  category: z.enum(PRODUCT_CATEGORIES).default('all'),
+  category: z.enum(FILTER_PRODUCT_CATEGORIES).default('all'),
 });
 
 export const getAdminProductsQueryDto = getPublicProductsQueryDto.extend({

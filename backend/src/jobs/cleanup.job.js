@@ -18,17 +18,39 @@ export const startCleanupJob = () => {
         return;
       }
 
-      console.log(`--- [CRON JOB] Tìm thấy ${orphanImages.length} ảnh rác. Đang tiến hành xóa... ---`);
+      console.log(
+        `--- [CRON JOB] Tìm thấy ${orphanImages.length} ảnh rác. Đang tiến hành xóa... ---`,
+      );
 
-      const deletePromises = orphanImages.map((img) => deleteFromImageKit(img.fileId));
-      await Promise.allSettled(deletePromises);
+      const deleteResults = await Promise.allSettled(
+        orphanImages.map((img) => deleteFromImageKit(img.fileId)),
+      );
 
-      const orphanIds = orphanImages.map((img) => img._id);
-      await TempUpload.deleteMany({ _id: { $in: orphanIds } });
+      const successfulIds = [];
 
-      console.log('--- [CRON JOB] Dọn dẹp ảnh rác hoàn tất! ---');
+      deleteResults.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+          successfulIds.push(orphanImages[index]._id);
+        } else {
+          console.error(
+            `--- [CRON JOB FAILED] Không thể xóa ảnh trên ImageKit (FileID: ${orphanImages[index].fileId}):`,
+            result.reason?.message || result.reason,
+          );
+        }
+      });
+
+      if (successfulIds.length > 0) {
+        await TempUpload.deleteMany({ _id: { $in: successfulIds } });
+        console.log(
+          `--- [CRON JOB] Đã xóa hoàn tất ${successfulIds.length}/${orphanImages.length} ảnh rác! ---`,
+        );
+      } else {
+        console.log(
+          '--- [CRON JOB] Không có ảnh nào được xóa thành công trên cloud trong đợt này. ---',
+        );
+      }
     } catch (error) {
-      console.error('--- [CRON JOB ERROR] Lỗi khi dọn dẹp ảnh rác:', error);
+      console.error('--- [CRON JOB ERROR] Lỗi hệ thống khi dọn rác:', error);
     }
   });
 };

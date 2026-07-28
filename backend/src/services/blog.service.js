@@ -3,6 +3,7 @@ import ApiError from '../utils/ApiError.js';
 import { RES_CODE } from '../constants/responseCode.constant.js';
 import { deleteFromImageKit } from '../middleware/upload.middleware.js';
 import TempUpload from '../models/TempUpload.js';
+import { escapeRegex } from '../utils/escapeRegex.js';
 
 /**
  * @desc Thêm bài blog mới
@@ -33,7 +34,7 @@ export const getBlogsService = async (query) => {
   const filter = {};
 
   if (keyword) {
-    const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedKeyword = escapeRegex(keyword.trim())
     filter.$or = [
       { title: { $regex: escapedKeyword, $options: 'i' } },
       { description: { $regex: escapedKeyword, $options: 'i' } },
