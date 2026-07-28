@@ -5,6 +5,7 @@ import aboutImage from '../../assets/about-section.jpg';
 import ServiceSection from '@/components/client/home/ServiceSection';
 import ContentSection from '@/components/client/home/ContentSection';
 import TestimonialSection from '@/components/client/home/TestimonialSection';
+import BlogSection from '@/components/client/home/BlogSection';
 
 const HomePage = () => {
   return (
@@ -19,6 +20,7 @@ const HomePage = () => {
       <ServiceSection />
       <ContentSection />
       <TestimonialSection />
+      <BlogSection />
     </div>
   );
 };

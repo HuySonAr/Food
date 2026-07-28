@@ -3,17 +3,18 @@ import { useBlog } from '@/hooks/useBlog';
 import { formatDate } from '@/utils/formatDate';
 import { Link } from 'react-router-dom';
 
-const BlogPage = () => {
-  const { loading, error, blogs } = useBlog();
+const BlogContent = () => {
+  const { blogs, loading, error } = useBlog(1, 4);
 
   return (
-    <div className="py-12 sm:py-16 md:py-20 lg:py-30">
+    <div className="py-12 sm:py-16 md:py-20 lg:py-30 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 2xl:px-0">
-        <div className="flex flex-col items-center gap-4 sm:gap-5">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[100px] font-serif font-normal text-center">
-            Our Blog & Articles
+        <div className="flex flex-col items-center text-center gap-4 sm:gap-6">
+          <h1 className="font-serif font-medium text-3xl sm:text-4xl md:text-5xl lg:text-[55px] text-foreground leading-tight lg:leading-[60.5px]">
+            Read More Articles
           </h1>
-          <p className="text-sm sm:text-base lg:text-lg text-muted-foreground w-full sm:max-w-[80%] lg:max-w-[60%] mx-auto text-center">
+
+          <p className="text-base sm:text-lg font-normal text-muted-foreground max-w-[90%] md:max-w-[70%] lg:max-w-[50%]">
             We consider all the drivers of change gives you the components you
             need to change to create a truly happens.
           </p>
@@ -72,9 +73,7 @@ const BlogPage = () => {
                   <p className="text-sm text-[#737865] font-medium">
                     {formatDate(item.createdAt)}
                   </p>
-                  <h3 className="text-xl text-foreground font-medium lg:line-clamp-2">
-                    {item.title}
-                  </h3>
+                  <h3 className="text-xl text-foreground font-medium lg:line-clamp-2">{item.title}</h3>
                 </div>
               </Link>
             ))}
@@ -85,4 +84,4 @@ const BlogPage = () => {
   );
 };
 
-export default BlogPage;
+export default BlogContent;
