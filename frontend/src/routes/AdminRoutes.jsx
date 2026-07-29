@@ -1,12 +1,12 @@
 import { Route, Routes } from 'react-router-dom';
 import AdminLayout from '../layouts/AdminLayout';
 import LoginPage from '../pages/admin/LoginPage';
-import TestPage from '../pages/admin/TestPage';
 import ClientOnlyGuard from './ClientOnlyGuard';
 import AdminGuard from './AdminGuard';
 import NotFoundPage from '@/pages/NotFoundPage';
 import ForgotPasswordPage from '@/pages/admin/ForgotPasswordPage';
 import ResetPasswordPage from '@/pages/admin/ResetPasswordPage';
+import Dashboard from '@/pages/admin/Dashboard';
 
 const AdminRoutes = () => {
   return (
@@ -21,8 +21,7 @@ const AdminRoutes = () => {
       {/* --- Private */}
       <Route element={<AdminGuard />}>
         <Route element={<AdminLayout />}>
-          {/* main page is dashboard */}
-          <Route index element={<TestPage />} />
+          <Route index element={<Dashboard />} />
           <Route path="products" element={<h1>Manage Products</h1>} />
         </Route>
       </Route>
