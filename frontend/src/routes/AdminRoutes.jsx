@@ -4,6 +4,9 @@ import LoginPage from '../pages/admin/LoginPage';
 import TestPage from '../pages/admin/TestPage';
 import ClientOnlyGuard from './ClientOnlyGuard';
 import AdminGuard from './AdminGuard';
+import NotFoundPage from '@/pages/NotFoundPage';
+import ForgotPasswordPage from '@/pages/admin/ForgotPasswordPage';
+import ResetPasswordPage from '@/pages/admin/ResetPasswordPage';
 
 const AdminRoutes = () => {
   return (
@@ -11,6 +14,8 @@ const AdminRoutes = () => {
       {/* Public*/}
       <Route element={<ClientOnlyGuard />}>
         <Route path="login" element={<LoginPage />} />
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="reset-password" element={<ResetPasswordPage />} />
       </Route>
 
       {/* --- Private */}
@@ -22,7 +27,7 @@ const AdminRoutes = () => {
         </Route>
       </Route>
 
-      <Route path="*" element={<h1>404 Admin Not Found</h1>} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };

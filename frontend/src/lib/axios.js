@@ -70,6 +70,8 @@ axiosInstance.interceptors.response.use(
         setAccessToken(null);
         processQueue(error, null);
 
+        window.dispatchEvent(new Event('auth:unauthorized'))
+
         return Promise.reject(error);
       }
     }

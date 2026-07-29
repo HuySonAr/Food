@@ -1,40 +1,26 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '../../context/useAuth';
-
 import Logo from '../../assets/logo.svg';
 import bgLogin from '../../assets/about-content.png';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { forgotPasswordService } from '../../services/auth.service';
 
-const LoginPage = () => {
+const ForgotPasswordPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
-
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
-  });
-
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setForm((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      await login(form.email, form.password);
-      navigate('/admin');
+      const res = await forgotPasswordService(email);
+      toast.success(res.data.data.message || 'An OTP has been sent to your email.');
+      navigate('/admin/reset-password', { state: { email } });
     } catch (error) {
-      toast.error(error.response?.data?.msg);
+      toast.error(error.response?.data?.msg || 'Failed to send OTP.');
     } finally {
       setLoading(false);
     }
@@ -44,7 +30,8 @@ const LoginPage = () => {
     <div className="min-h-screen flex items-center bg-muted/30 py-10">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2">
-          {/* Login */}
+          
+          {/* Form */}
           <div className="animate-fade-up rounded-3xl sm:p-8 lg:p-10">
             <div className="mb-5 sm:mb-10 flex items-center gap-3">
               <img
@@ -52,7 +39,6 @@ const LoginPage = () => {
                 alt="Bistro Bliss"
                 className="size-10 md:size-12 lg:size-14 shrink-0"
               />
-
               <span className="font-serif text-2xl md:text-3xl font-semibold italic text-secondary lg:text-[42px]">
                 Bistro Bliss
               </span>
@@ -60,15 +46,14 @@ const LoginPage = () => {
 
             <div className="mb-8">
               <h1 className="font-serif text-4xl font-medium text-foreground lg:text-5xl">
-                Welcome Back
+                Forgot Password
               </h1>
-
               <p className="mt-3 text-base text-muted-foreground">
-                Sign in to access your restaurant dashboard.
+                Enter your email address to receive an OTP.
               </p>
             </div>
 
-            <form onSubmit={handleLogin} className="flex flex-col gap-6">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 <label className="text-sm md:text-base font-bold">
                   Email Address
@@ -76,58 +61,39 @@ const LoginPage = () => {
                 <div className="flex flex-col gap-1">
                   <input
                     type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your registered email"
                     required
                     className="py-3 md:py-4 px-4 sm:px-6 text-sm sm:text-base border rounded-[72px] outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm sm:text-base font-bold">
-                  Password
-                </label>
-                <div className="flex flex-col gap-1">
-                  <input
-                    type="password"
-                    name="password"
-                    value={form.password}
-                    onChange={handleChange}
-                    placeholder="Enter your password"
-                    required
-                    className="py-3 md:py-4 px-4 sm:px-6 text-sm sm:text-base border rounded-[72px] outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end">
-                <Link
-                  to="../forgot-password"
-                  relative="path"
-                  className="text-sm font-medium text-primary transition hover:underline"
-                >
-                  Forgot password?
-                </Link>
               </div>
 
               <Button
                 type="submit"
-                disabled={loading}
-                className="h-14 rounded-full text-base font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
+                disabled={loading || !email}
+                className="h-14 mt-2 rounded-full text-base font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 {loading ? (
                   <div className="flex items-center gap-1">
-                    Loading...
+                    Sending...
                     <Loader2 className="size-3.5 sm:size-4 animate-spin" />
                   </div>
                 ) : (
-                  'Sign in'
+                  'Send OTP'
                 )}
               </Button>
             </form>
+
+            <div className="mt-8 text-center">
+              <Link
+                to="/admin/login"
+                className="text-sm font-medium text-primary transition hover:underline"
+              >
+                &larr; Back to Login
+              </Link>
+            </div>
           </div>
 
           {/* Image */}
@@ -135,13 +101,14 @@ const LoginPage = () => {
             <img
               src={bgLogin}
               alt="Restaurant"
-              className="w-full object-cover"
+              className="w-full h-full object-cover"
             />
           </div>
+
         </div>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default ForgotPasswordPage;

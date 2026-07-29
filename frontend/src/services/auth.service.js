@@ -27,3 +27,19 @@ export const refreshTokenService = async () => {
 export const getMeService = async () => {
   return axiosInstance.get('/auth/me');
 };
+
+export const forgotPasswordService = async (email) => {
+  return axiosInstance.post(
+    '/auth/forgot-password',
+    { email },
+    { skipAuthRefresh: true },
+  );
+};
+
+export const resetPasswordService = async (email, otp, newPassword) => {
+  return axiosInstance.post(
+    '/auth/reset-password',
+    { email, otp, newPassword },
+    { skipAuthRefresh: true },
+  );
+};

@@ -13,16 +13,16 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchUser = async () => {
-    const result = await getMeService()
-    setUser(result.data.data)
-  }
+    const result = await getMeService();
+    setUser(result.data.data);
+  };
 
   useEffect(() => {
     const restoreSession = async () => {
       try {
         const newToken = await refreshTokenService();
         setAccessToken(newToken);
-        await fetchUser()
+        await fetchUser();
       } catch {
         setUser(null);
         setAccessToken(null);
@@ -31,6 +31,16 @@ export const AuthProvider = ({ children }) => {
       }
     };
     restoreSession();
+
+    const handleUnauthorized = () => {
+      setUser(null);
+      setAccessToken(null);
+    };
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+
+    return () => {
+      window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    };
   }, []);
 
   const login = async (email, password) => {

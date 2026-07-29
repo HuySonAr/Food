@@ -7,6 +7,7 @@ import ContactPage from '@/pages/public/ContactPage';
 import BookPage from '@/pages/public/BookPage';
 import BlogPage from '@/pages/public/BlogPage';
 import BlogDetail from '@/pages/public/BlogDetail';
+import NotFoundPage from '@/pages/NotFoundPage';
 
 const ClientRoutes = () => {
   return (
@@ -20,7 +21,7 @@ const ClientRoutes = () => {
         <Route path="contact" element={<ContactPage />} />
         <Route path="book" element={<BookPage />} />
       </Route>
-      <Route path="*" element={<h1>Not Found</h1>} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };
