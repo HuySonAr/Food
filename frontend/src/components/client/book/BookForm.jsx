@@ -99,7 +99,7 @@ const BookForm = () => {
               onChange={(e) => handleChange('customerName', e.target.value)}
               placeholder="Enter your full name"
               required
-              className="py-3 md:py-4 px-4 sm:px-6 text-sm sm:text-base border rounded-[72px] w-full"
+              className="py-3 md:py-4 px-4 sm:px-6 text-base border rounded-[72px] w-full"
             />
             {errorField.customerName && (
               <p className="text-xs sm:text-sm text-destructive pl-4 sm:pl-6">
@@ -118,7 +118,7 @@ const BookForm = () => {
               onChange={(e) => handleChange('phone', e.target.value)}
               placeholder="x-xxx-xxx-xxxx"
               required
-              className="py-3 sm:py-4 px-4 sm:px-6 text-sm sm:text-base border rounded-[72px] w-full"
+              className="py-3 sm:py-4 px-4 sm:px-6 text-base border rounded-[72px] w-full"
             />
             {errorField.phone && (
               <p className="text-xs sm:text-sm text-destructive pl-4 sm:pl-6">

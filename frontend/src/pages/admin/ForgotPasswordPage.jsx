@@ -65,7 +65,7 @@ const ForgotPasswordPage = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your registered email"
                     required
-                    className="py-3 md:py-4 px-4 sm:px-6 text-sm sm:text-base border rounded-[72px] outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="py-3 md:py-4 px-4 sm:px-6 text-base border rounded-[72px] outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
               </div>
@@ -73,7 +73,7 @@ const ForgotPasswordPage = () => {
               <Button
                 type="submit"
                 disabled={loading || !email}
-                className="h-14 mt-2 rounded-full text-base font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="h-auto py-4 sm:py-5 rounded-full text-sm sm:text-base font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 {loading ? (
                   <div className="flex items-center gap-1">

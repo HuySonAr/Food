@@ -45,7 +45,7 @@ const CustomSelect = ({
         type="button"
         onClick={handleToggle}
         className={cn(
-          'flex w-full items-center justify-between text-sm sm:text-base rounded-[72px] border px-4 py-3 sm:px-6 sm:py-4 focus:border-primary cursor-pointer',
+          'flex w-full items-center justify-between text-base rounded-[72px] border px-4 py-3 sm:px-6 sm:py-4 focus:border-primary cursor-pointer',
         )}
       >
         {selectedOption?.label || placeholder}

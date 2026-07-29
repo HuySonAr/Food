@@ -121,7 +121,7 @@ const ResetPasswordPage = () => {
                     onChange={handleChange}
                     placeholder="Enter 6-digit OTP"
                     required
-                    className="py-3 md:py-4 px-4 sm:px-6 text-sm sm:text-base border rounded-[72px] outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="py-3 md:py-4 px-4 sm:px-6 text-base border rounded-[72px] outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
               </div>
@@ -138,7 +138,7 @@ const ResetPasswordPage = () => {
                     onChange={handleChange}
                     placeholder="Enter new password"
                     required
-                    className="py-3 md:py-4 px-4 sm:px-6 text-sm sm:text-base border rounded-[72px] outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="py-3 md:py-4 px-4 sm:px-6 text-base border rounded-[72px] outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
               </div>
@@ -155,7 +155,7 @@ const ResetPasswordPage = () => {
                     onChange={handleChange}
                     placeholder="Confirm new password"
                     required
-                    className="py-3 md:py-4 px-4 sm:px-6 text-sm sm:text-base border rounded-[72px] outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="py-3 md:py-4 px-4 sm:px-6 text-base border rounded-[72px] outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
               </div>
@@ -163,7 +163,7 @@ const ResetPasswordPage = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="h-14 mt-4 rounded-full text-base font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="h-auto py-4 sm:py-5 mt-4 rounded-full text-base font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 {loading ? (
                   <div className="flex items-center gap-1">

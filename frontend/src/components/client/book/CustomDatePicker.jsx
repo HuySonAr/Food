@@ -32,7 +32,7 @@ const CustomDatePicker = ({
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger
         className={cn(
-          'flex w-full items-center justify-between rounded-[72px] border px-4 py-3 sm:px-6 sm:py-4 text-left text-sm sm:text-base focus:border-primary cursor-pointer',
+          'flex w-full items-center justify-between rounded-[72px] border px-4 py-3 sm:px-6 sm:py-4 text-left text-base focus:border-primary cursor-pointer',
           className,
         )}
       >

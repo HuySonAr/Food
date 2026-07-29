@@ -12,7 +12,6 @@ export const useBlog = (page = 1, limit = 12) => {
       setLoading(true);
       try {
         const response = await getBlogsService({page, limit});
-        console.log("blog", response.data.blogs)
         setBlogs(response.data.blogs);
         setPagination(response.data.pagination);
         setErorr(null);

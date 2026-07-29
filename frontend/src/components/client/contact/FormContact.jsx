@@ -71,7 +71,7 @@ const FormContact = () => {
               onChange={handleChange}
               placeholder="Enter your name"
               required
-              className="py-3 md:py-4 px-4 sm:px-6 text-sm sm:text-base border rounded-[72px] w-full"
+              className="py-3 md:py-4 px-4 sm:px-6 text-base border rounded-[72px] w-full"
             />
             {errorField.name && (
               <p className="text-xs sm:text-sm text-destructive pl-4 sm:pl-6">
@@ -91,7 +91,7 @@ const FormContact = () => {
               onChange={handleChange}
               placeholder="Enter email address"
               required
-              className="py-3 md:py-4 px-4 md:px-6 text-sm sm:text-base border rounded-[72px] w-full"
+              className="py-3 md:py-4 px-4 md:px-6 text-base border rounded-[72px] w-full"
             />
 
             {errorField.email && (
@@ -104,7 +104,7 @@ const FormContact = () => {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm md:text-base font-bold">Subject</label>
+        <label className="text-sm sm:text-base font-bold">Subject</label>
         <div className="flex flex-col gap-1">
           <input
             type="text"
@@ -112,7 +112,7 @@ const FormContact = () => {
             value={formData.subject}
             onChange={handleChange}
             placeholder="Write a subject"
-            className="py-3 md:py-4 px-4 md:px-6 text-sm sm:text-base border rounded-[72px] w-full"
+            className="py-3 md:py-4 px-4 md:px-6 text-base border rounded-[72px] w-full"
           />
           {errorField.subject && (
             <p className="text-xs sm:text-sm text-destructive pl-4 sm:pl-6">
@@ -123,7 +123,7 @@ const FormContact = () => {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm md:text-base font-bold">Message</label>
+        <label className="text-sm sm:text-base font-bold">Message</label>
         <div className="flex flex-col gap-1">
           <textarea
             name="message"
@@ -131,7 +131,7 @@ const FormContact = () => {
             onChange={handleChange}
             placeholder="Write your message"
             required
-            className="py-4 md:py-6 px-4 md:px-6 text-sm sm:text-base border rounded-2xl min-h-30 md:min-h-40 w-full resize-y"
+            className="py-4 md:py-6 px-4 md:px-6 text-base border rounded-2xl min-h-30 md:min-h-40 w-full resize-y"
           />
           {errorField.message && (
             <p className="text-xs sm:text-sm text-destructive pl-4 sm:pl-6">
