@@ -39,8 +39,14 @@ const ResetPasswordPage = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
 
-    if (form.newPassword.length < 6) {
-      toast.error('Password must be at least 6 characters long.');
+    if (form.newPassword.length < 8) { 
+      toast.error('Password must be at least 8 characters long.');
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/;
+    if (!passwordRegex.test(form.newPassword)) {
+      toast.error('Password must contain at least one uppercase letter, one lowercase letter, and one number.');
       return;
     }
 
@@ -58,7 +64,7 @@ const ResetPasswordPage = () => {
       );
 
       toast.success(
-        res.data.data.msg || 'Password has been reset successfully!',
+        res.data.msg || 'Password has been reset successfully!',
       );
 
       setForm({ email: '', otp: '', newPassword: '', confirmPassword: '' });

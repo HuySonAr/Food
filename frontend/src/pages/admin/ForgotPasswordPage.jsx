@@ -17,7 +17,7 @@ const ForgotPasswordPage = () => {
     setLoading(true);
     try {
       const res = await forgotPasswordService(email);
-      toast.success(res.data.data.message || 'An OTP has been sent to your email.');
+      toast.success(res.data.msg || 'An OTP has been sent to your email.');
       navigate('/admin/reset-password', { state: { email } });
     } catch (error) {
       toast.error(error.response?.data?.msg || 'Failed to send OTP.');

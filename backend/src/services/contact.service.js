@@ -77,9 +77,9 @@ export const getContactsService = async (query) => {
   if (keyword) {
     const escapedKeyword = escapeRegex(keyword.trim())
     filter.$or = [
-      { name: { $regex: keyword, $options: 'i' } },
-      { email: { $regex: keyword, $options: 'i' } },
-      { subject: { $regex: keyword, $options: 'i' } },
+      { name: { $regex: escapedKeyword, $options: 'i' } },
+      { email: { $regex: escapedKeyword, $options: 'i' } },
+      { subject: { $regex: escapedKeyword, $options: 'i' } },
     ];
   }
 

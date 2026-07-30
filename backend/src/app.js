@@ -8,9 +8,9 @@ import reservationRoutes from './routes/reservation.route.js';
 import productRoutes from './routes/product.route.js';
 import contactRoutes from './routes/contact.route.js';
 import blogRoutes from './routes/blog.route.js';
+import dashboardRoutes from "./routes/dashboard.route.js"
 import { RES_CODE } from './constants/responseCode.constant.js';
 import { formatResponse } from './utils/response.util.js';
-import imagekit from './config/imagekit.js';
 
 const app = express();
 
@@ -40,6 +40,7 @@ app.use('/api/reservations', reservationRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/blogs', blogRoutes);
+app.use("/api/dashboard", dashboardRoutes)
 
 app.use((req, res, next) => {
   res

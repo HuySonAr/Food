@@ -160,13 +160,13 @@ export const getReservationsService = async (query) => {
     filter.$or = [
       {
         customerName: {
-          $regex: keyword,
+          $regex: escapedKeyword,
           $options: 'i',
         },
       },
       {
         phone: {
-          $regex: keyword,
+          $regex: escapedKeyword,
           $options: 'i',
         },
       },

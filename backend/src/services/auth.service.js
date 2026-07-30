@@ -122,7 +122,7 @@ export const forgotPasswordService = async (email) => {
 
   const otp = crypto.randomInt(100000, 999999).toString();
 
-  admin.resetOtp = otp;
+  admin.resetOtp = hashToken(otp);
   admin.resetOtpExpire = Date.now() + 5 * 60 * 1000;
   await admin.save();
 
@@ -180,9 +180,11 @@ export const resetPasswordService = async (email, otp, newPassword) => {
     );
   }
 
+  const hashedOtp = hashToken(otp)
+
   const admin = await Admin.findOne({
     email: email,
-    resetOtp: otp,
+    resetOtp: hashedOtp,
     resetOtpExpire: { $gt: Date.now() },
   });
 

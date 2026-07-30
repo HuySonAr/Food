@@ -1,4 +1,4 @@
-import { date, z } from 'zod';
+import { z } from 'zod';
 
 export const loginRequestDto = z.object({
   email: z
@@ -8,7 +8,7 @@ export const loginRequestDto = z.object({
     .toLowerCase(),
   password: z
     .string({ required_error: 'Password is required' })
-    .min(6, 'Password must be at least 6 characters'),
+    .min(8, 'Password must be at least 8 characters'),
 });
 
 export const forgotPasswordRequestDto = z.object({
@@ -31,7 +31,11 @@ export const resetPasswordRequestDto = z.object({
     .regex(/^\d+$/, 'OTP must contain only numbers.'),
   newPassword: z
     .string({ required_error: 'New password is required.' })
-    .min(6, 'New password must be at least 6 characters long.'),
+    .min(8, 'New password must be at least 8 characters long.')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/,
+      'Password must contain at least one uppercase letter, one lowercase letter, and one number.'
+    ),
 });
 
 /**

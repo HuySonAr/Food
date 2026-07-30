@@ -12,8 +12,6 @@ const AdminHeader = () => {
   const { logout } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  console.log('mobile', isMobile);
-
   const test = true;
 
   const greeting = getGreeting();
@@ -32,19 +30,19 @@ const AdminHeader = () => {
   return (
     <div className="py-4 px-3 flex items-center bg-muted justify-between shadow">
       <div className="flex flex-col">
-        <h2 className="text-lg font-semibold">{greeting}. Admin</h2>
+        <h2 className="text-lg font-semibold">{greeting}, Admin</h2>
         <p className="text-sm text-muted-foreground">Have a great day!</p>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <Button
           disabled={loading}
           onClick={handleLogout}
-          className="cursor-pointer"
+          className="cursor-pointer text-base h-auto py-2 px-3"
         >
           {loading ? <Loader2 className="animate-spin" /> : 'Log out'}
         </Button>
-        {isMobile && <SidebarTrigger className="cursor-pointer" />}
+        {isMobile && <SidebarTrigger size="icon-lg" className="cursor-pointer" />}
       </div>
     </div>
   );
