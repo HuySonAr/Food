@@ -1,3 +1,13 @@
+import z from "zod";
+
+export const getChartsQueryDto = z.object({
+  range: z
+    .enum(['week', 'month', 'year'])
+    .optional()
+    .default('week'),
+});
+
+
 export class DashboardStatsResponseDto {
   constructor(data) {
     this.reservations = {
@@ -23,5 +33,13 @@ export class DashboardStatsResponseDto {
       percentChange: data.blogs.percentChange || 0,
       trend: data.blogs.trend || [0, 0, 0, 0, 0, 0, 0],
     };
+  }
+}
+
+
+export class DashboardChartsResponseDto {
+  constructor(data){
+    this.reservationTrend = data.trend;
+    this.reservationStatus = data.status;
   }
 }

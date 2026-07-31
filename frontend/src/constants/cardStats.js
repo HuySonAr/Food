@@ -7,31 +7,31 @@ import {
 
 export const CARDS_CONFIG = [
   {
-    title: 'Pending Reservations',
+    title: 'Pending Book',
     icon: ArchiveRestore,
     dataKey: 'reservations',
-    color: 'border-blue-600',
-    hover: 'hover:border-blue-600',
+    themeColor: 'blue',
+    link: '/admin/reservations'
   },
   {
-    title: 'Pending Contacts',
+    title: 'Noti Contacts',
     icon: MessageSquareText,
     dataKey: 'contacts',
-    color: 'border-amber-600',
-    hover: 'hover:border-amber-600',
+    themeColor: 'amber',
+    link: '/admin/contacts'
   },
   {
     title: 'Total Products',
     icon: Utensils,
     dataKey: 'products',
-    color: 'border-emerald-600',
-    hover: 'hover:border-emerald-600',
+    themeColor: 'emerald',
+    link: '/admin/products'
   },
   {
     title: 'Published Blogs',
     icon: FileText,
     dataKey: 'blogs',
-    color: 'border-purple-600',
-    hover: 'hover:border-purple-600',
+    themeColor: 'purple',
+    link: '/admin/blogs'
   },
 ];

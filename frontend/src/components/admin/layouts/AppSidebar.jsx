@@ -4,6 +4,9 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
@@ -12,8 +15,10 @@ import { PanelRightClose, PanelRightOpen } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/useAuth';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { getAvatarFallback } from '@/utils/avatar';
+import { NavLink } from 'react-router-dom';
+import { SIDEBAR_ITEM } from '@/constants/sidebarItem';
 
 const AppSidebar = () => {
   const { user } = useAuth();
@@ -21,7 +26,7 @@ const AppSidebar = () => {
   const isMobile = useIsMobile();
 
   const collapsed = !isMobile && state === 'collapsed';
-  console.log('user', user);
+
   return (
     <Sidebar collapsible="icon" side={`${isMobile ? 'right' : 'left'}`}>
       <SidebarHeader className="flex-row items-center justify-between h-20 px-3 gap-0 bg-muted border-b">
@@ -60,10 +65,34 @@ const AppSidebar = () => {
         )}
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup />
-        <SidebarGroup />
+        <SidebarGroup>
+          <SidebarMenu>
+            {SIDEBAR_ITEM.map((item) => (
+              <SidebarMenuItem key={item.title}>
+                <NavLink
+                  to={item.url}
+                  end={item.end}
+                  className="w-full block"
+                >
+                  {({ isActive }) => (
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      isActive={isActive}
+                      className="cursor-pointer h-auto py-3 w-full gap-2 data-active:bg-primary data-active:text-white data-active:font-normal data-active:hover:bg-primary data-active:hover:text-white"
+                    >
+                      <item.icon className="" />
+                      <span className="text-base">{item.title}</span>
+                    </SidebarMenuButton>
+                  )}
+                </NavLink>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className={`flex-row items-center gap-2 py-4 border-t transition-all duration-200 ${!collapsed && "px-3"}`}>
+      <SidebarFooter
+        className={`flex-row items-center gap-2 py-4 border-t transition-all duration-200 ${!collapsed && 'px-3'}`}
+      >
         <Avatar className="shrink-0">
           <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
             {getAvatarFallback(user.email)}

@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import { useAuth } from '../context/useAuth';
 import { Outlet } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import AppSidebar from '@/components/admin/layouts/AppSidebar';
 import AdminHeader from '@/components/admin/layouts/AdminHeader';
+import InfoNavbar from '@/components/admin/layouts/InfoNavbar';
 
 const AdminLayout = () => {
   return (
@@ -13,6 +12,7 @@ const AdminLayout = () => {
 
         <div className="flex flex-1 flex-col">
           <AdminHeader />
+          <InfoNavbar />
 
           <main className='flex-1 p-6 bg-white'>
             <Outlet />

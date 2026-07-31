@@ -7,6 +7,10 @@ import NotFoundPage from '@/pages/NotFoundPage';
 import ForgotPasswordPage from '@/pages/admin/ForgotPasswordPage';
 import ResetPasswordPage from '@/pages/admin/ResetPasswordPage';
 import Dashboard from '@/pages/admin/Dashboard';
+import ManageBook from '@/pages/admin/ManageBook';
+import ManageContact from '@/pages/admin/ManageContact';
+import ManageProduct from '@/pages/admin/ManageProduct';
+import ManageBlog from '@/pages/admin/ManageBlog';
 
 const AdminRoutes = () => {
   return (
@@ -22,7 +26,10 @@ const AdminRoutes = () => {
       <Route element={<AdminGuard />}>
         <Route element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
-          <Route path="products" element={<h1>Manage Products</h1>} />
+          <Route path="reservations" element={<ManageBook />} />
+          <Route path="contacts" element={<ManageContact />} />
+          <Route path="products" element={<ManageProduct />} />
+          <Route path="blogs" element={<ManageBlog />} />
         </Route>
       </Route>
 

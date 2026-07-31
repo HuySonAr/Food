@@ -1,8 +1,17 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
+import isoWeek from "dayjs/plugin/isoWeek.js"
 import Blog from '../models/Blog.js';
 import Contact from '../models/Contact.js';
 import Product from '../models/Product.js';
 import Reservation from '../models/Reservation.js';
+import { STATUS_RESERVATIONS } from '../constants/reservation.constant.js';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(isoWeek)
+const TZ = process.env.TIMEZONE || 'Asia/Ho_Chi_Minh';
 
 const getStatsWithTrend = async (Model, baseFilter = {}) => {
   const now = dayjs();
@@ -66,4 +75,74 @@ export const getDashboardStatsService = async () => {
     products,
     blogs,
   };
+};
+
+export const getDashboardChartsService = async (range) => {
+  const now = dayjs().tz(TZ);
+  const todayEnd = now.endOf('day').toDate();
+
+  let startDate;
+  let daysCount;
+
+  if (range === 'month') {
+    startDate = now.startOf('month');
+    daysCount = now.diff(startDate, 'day') + 1; 
+  } else if (range === 'year') {
+    startDate = now.startOf('year');
+    daysCount = now.diff(startDate, 'day') + 1;
+  } else {
+    startDate = now.startOf('isoWeek');
+    daysCount = now.diff(startDate, 'day') + 1;
+  }
+
+  const [trendRaw, statusRaw] = await Promise.all([
+    Reservation.aggregate([
+      { $match: { createdAt: { $gte: startDate.toDate(), $lte: todayEnd } } },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: '%Y-%m-%d',
+              date: '$createdAt',
+              timezone: TZ,
+            },
+          },
+          count: { $sum: 1 },
+        },
+      },
+    ]),
+
+    Reservation.aggregate([
+      { $match: { createdAt: { $gte: startDate.toDate(), $lte: todayEnd } } },
+      {
+        $group: {
+          _id: '$status',
+          count: { $sum: 1 },
+        },
+      },
+    ]),
+  ]);
+
+  const trend = [];
+  for (let i = 0; i < daysCount; i++) {
+    const targetDate = startDate.add(i, 'day');
+    const dateStr = targetDate.format('YYYY-MM-DD');
+    const displayDate = targetDate.format('DD/MM');
+
+    const found = trendRaw.find((item) => item._id === dateStr);
+    trend.push({
+      date: displayDate,
+      count: found ? found.count : 0,
+    });
+  }
+
+  const status = STATUS_RESERVATIONS.map((s) => {
+    const found = statusRaw.find((item) => item._id === s)
+    return {
+      status: s,
+      count: found ? found.count : 0
+    }
+  })
+
+  return {trend, status}
 };

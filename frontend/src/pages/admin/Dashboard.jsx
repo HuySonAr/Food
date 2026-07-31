@@ -37,11 +37,12 @@ const Dashboard = () => {
           CARDS_CONFIG.map((config, index) => (
             <StatCard
               key={index}
+              index={index}
               title={config.title}
               icon={config.icon}
               data={stats[config.dataKey]}
-              borderColor={config.color}
-              hover={config.hover}
+              themeColor={config.themeColor}
+              link={config.link}
             />
           ))}
       </div>
