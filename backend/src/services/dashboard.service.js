@@ -14,7 +14,7 @@ dayjs.extend(isoWeek)
 const TZ = process.env.TIMEZONE || 'Asia/Ho_Chi_Minh';
 
 const getStatsWithTrend = async (Model, baseFilter = {}) => {
-  const now = dayjs();
+  const now = dayjs().tz(TZ);
   const startOfToday = now.endOf('day');
   const sevenDaysAgo = now.subtract(6, 'day').startOf('day');
   const fourteenDaysAgo = now.subtract(13, 'day').startOf('day');
@@ -34,16 +34,15 @@ const getStatsWithTrend = async (Model, baseFilter = {}) => {
   });
 
   const trend = [];
-  let currentPeriodCount = 0;
+  let currentPeriodCount = recentItems.length;
 
   for (let i = 6; i >= 0; i--) {
     const targetDate = now.subtract(i, 'day').format('YYYY-MM-DD');
     const countForDay = recentItems.filter(
-      (item) => dayjs(item.createdAt).format('YYYY-MM-DD') === targetDate,
+      (item) => dayjs(item.createdAt).tz(TZ).format('YYYY-MM-DD') === targetDate,
     ).length;
 
     trend.push(countForDay);
-    currentPeriodCount += countForDay;
   }
 
   let percentChange = 0;
@@ -53,6 +52,8 @@ const getStatsWithTrend = async (Model, baseFilter = {}) => {
   } else if (currentPeriodCount > 0) {
     percentChange = 100;
   }
+
+  percentChange = Math.max(-100, Math.min(100, percentChange));
 
   return {
     total: totalCount,

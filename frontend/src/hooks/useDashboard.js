@@ -1,4 +1,4 @@
-import { getDashboardStatsService } from '@/services/dashboard.service';
+import { getDashboardChartsService, getDashboardStatsService } from '@/services/dashboard.service';
 import { useEffect, useState } from 'react';
 
 export const useDashboard = () => {
@@ -25,3 +25,29 @@ export const useDashboard = () => {
 
   return { stats, loading, error };
 };
+
+
+export const useDashboardCharts = (range) => {
+  const [charts, setCharts] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCharts = async() => {
+      setLoading(true)
+      setError(null)
+      try {
+        const response = await getDashboardChartsService(range)
+        setCharts(response.data)
+      } catch (err) {
+        setError(err.response?.data?.msg)
+      } finally{
+        setLoading(false)
+      }
+    }
+
+    fetchCharts()
+  }, [range])
+
+  return {charts, loading, error}
+}

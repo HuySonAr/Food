@@ -14,7 +14,7 @@ const AdminLayout = () => {
           <AdminHeader />
           <InfoNavbar />
 
-          <main className='flex-1 p-6 bg-white'>
+          <main className='flex-1 p-6 bg-white space-y-6'>
             <Outlet />
           </main>
         </div>
