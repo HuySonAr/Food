@@ -11,6 +11,13 @@ import { TIME_RANGES } from '@/constants/buttonTime';
 import StatusChart from '@/components/admin/dashboard/StatusChart';
 import TrendChartSkeleton from '@/components/skeleton/TrendChartSkeleton';
 import StatusChartSkeleton from '@/components/skeleton/StatusChartSkeleton';
+import { useAdminReservations } from '@/hooks/useReservation';
+import { useAdminContacts } from '@/hooks/useContact';
+import DashboardTableCard from '@/components/admin/dashboard/DashboardTableCard';
+import { TableCell, TableRow } from '@/components/ui/table';
+
+const headerContact = ['Name', 'Email', 'Subject', 'Time', 'Status'];
+const headerReservation = ['Customer', 'Date', 'Guests', 'Time', 'Status'];
 
 const Dashboard = () => {
   const [range, setRange] = useState('week');
@@ -22,6 +29,12 @@ const Dashboard = () => {
     error: chartsError,
   } = useDashboardCharts(range);
 
+  const { reservations } = useAdminReservations(1, 5, '', 'pending');
+  const { contacts } = useAdminContacts(1, 5, '', 'pending');
+
+  console.log('reservations', reservations);
+  console.log('contacts', contacts);
+
   useEffect(() => {
     if (statsError) {
       toast.error(statsError);
@@ -30,8 +43,6 @@ const Dashboard = () => {
       toast.error(chartsError);
     }
   }, [statsError, chartsError]);
-
-  console.log('stats', stats);
 
   return (
     <>
@@ -71,8 +82,12 @@ const Dashboard = () => {
 
       <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-1">
         <div className="flex flex-col animate-fade-up">
-          <h2 className='text-lg lg:text-2xl font-medium'>Reservations Analytics</h2>
-          <p className='text-sm text-muted-foreground hidden lg:block'>Monitor reservation trends and status distribution over time.</p>
+          <h2 className="text-lg lg:text-2xl font-medium">
+            Reservations Analytics
+          </h2>
+          <p className="text-sm text-muted-foreground hidden lg:block">
+            Monitor reservation trends and status distribution over time.
+          </p>
         </div>
         <SegmentedControl
           options={TIME_RANGES}
@@ -113,6 +128,42 @@ const Dashboard = () => {
             </div>
           </>
         )}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <DashboardTableCard
+          headers={headerReservation}
+          content="Pending Reservations"
+          description="Reservations awaiting confirmation"
+          link="/admin/reservations"
+        >
+          {reservations.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell>{item?.customerName}</TableCell>
+              <TableCell>{item?.formattedDate}</TableCell>
+              <TableCell>{item?.guests}</TableCell>
+              <TableCell>{item?.timeSlot}</TableCell>
+              <TableCell>{item?.status}</TableCell>
+            </TableRow>
+          ))}
+        </DashboardTableCard>
+
+        <DashboardTableCard
+          headers={headerContact}
+          content="Pending Contacts"
+          description="Customer inquiries awaiting response."
+          link="/admin/contacts"
+        >
+          {contacts.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell>{item?.name}</TableCell>
+              <TableCell>{item?.email}</TableCell>
+              <TableCell>{item?.subject}</TableCell>
+              <TableCell>{item?.formattedCreatedAt}</TableCell>
+              <TableCell>{item?.status}</TableCell>
+            </TableRow>
+          ))}
+        </DashboardTableCard>
       </div>
     </>
   );

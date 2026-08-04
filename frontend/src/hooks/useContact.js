@@ -1,5 +1,12 @@
-import { createContactService } from '@/services/contact.service';
-import { useState } from 'react';
+import {
+  createContactService,
+  deleteContactService,
+  getContactByIdService,
+  getContactsService,
+  updateContactService,
+} from '@/services/contact.service';
+import { formatResponse } from '@/utils/response';
+import { useEffect, useState } from 'react';
 
 export const useContact = () => {
   const [loading, setLoading] = useState(false);
@@ -53,4 +60,99 @@ export const useContact = () => {
     successMsg,
     clearFieldError,
   };
+};
+
+export const useAdminContacts = (page, limit, keyword, status, sort) => {
+  const [contacts, setContacts] = useState([]);
+  const [pagination, setPagination] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchContacts = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const params = { page, limit, sort };
+        if (keyword) params.keyword = keyword;
+        if (status) params.status = status;
+        const response = await getContactsService(params);
+        setContacts(response.data.contacts);
+        setPagination(response.data.pagination);
+      } catch (err) {
+        setError(err.response?.data.msg);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContacts();
+  }, [page, limit, keyword, status, sort]);
+
+  return { contacts, pagination, loading, error };
+};
+
+export const useContactDetail = (id) => {
+  const [contact, setContact] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    if (!id) return;
+    const fetchDetail = async () => {
+      setLoading(false);
+      setError(null);
+
+      try {
+        const response = await getContactByIdService(id);
+        setContact(response.data);
+      } catch (err) {
+        setError(err.response?.data?.msg);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetail();
+  }, [id]);
+
+  return { contact, loading, error };
+};
+
+export const useContactActions = () => {
+  const [loading, setLoading] = useState(false);
+
+  const updateContact = async (id, data) => {
+    setLoading(true);
+    try {
+      const response = await updateContactService(id, data);
+      return formatResponse(response.code, response.msg, response.data);
+    } catch (err) {
+      return formatResponse(
+        err.response?.data?.code,
+        err.response?.data?.msg,
+        null,
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteContact = async (id) => {
+    setLoading(true);
+    try {
+      const response = await deleteContactService(id);
+      return formatResponse(response.code, response.msg, response.data);
+    } catch (err) {
+      return formatResponse(
+        err.response?.data?.code,
+        err.response?.data?.msg,
+        null,
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { updateContact, deleteContact, loading };
 };
