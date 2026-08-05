@@ -63,14 +63,14 @@ export const useReservation = () => {
   };
 };
 
-export const useAdminReservations = (
-  page,
-  limit,
-  keyword,
-  status,
-  time,
-  sort,
-) => {
+export const useAdminReservations = ({
+  page = 1,
+  limit = 10,
+  keyword = '',
+  status = '',
+  time = '',
+  sort = 'desc',
+} = {}) => {
   const [reservations, setReservations] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(true);

@@ -15,6 +15,10 @@ import { useAdminReservations } from '@/hooks/useReservation';
 import { useAdminContacts } from '@/hooks/useContact';
 import DashboardTableCard from '@/components/admin/dashboard/DashboardTableCard';
 import { TableCell, TableRow } from '@/components/ui/table';
+import { formatTimeSlot } from '@/utils/formatDate';
+import { Badge } from '@/components/ui/badge';
+import ErrorState from '@/components/common/ErrorState';
+import DashboardTableSkeleton from '@/components/skeleton/DashboardTableSkeleton';
 
 const headerContact = ['Name', 'Email', 'Subject', 'Time', 'Status'];
 const headerReservation = ['Customer', 'Date', 'Guests', 'Time', 'Status'];
@@ -29,11 +33,26 @@ const Dashboard = () => {
     error: chartsError,
   } = useDashboardCharts(range);
 
-  const { reservations } = useAdminReservations(1, 5, '', 'pending');
-  const { contacts } = useAdminContacts(1, 5, '', 'pending');
-
-  console.log('reservations', reservations);
-  console.log('contacts', contacts);
+  const {
+    reservations,
+    loading: reservationsLoading,
+    error: reservationsError,
+  } = useAdminReservations({
+    page: 1,
+    limit: 5,
+    status: 'pending',
+    sort: 'desc',
+  });
+  const {
+    contacts,
+    loading: contactsLoading,
+    error: contactsError,
+  } = useAdminContacts({
+    page: 1,
+    limit: 5,
+    status: 'pending',
+    sort: 'desc',
+  });
 
   useEffect(() => {
     if (statsError) {
@@ -53,14 +72,11 @@ const Dashboard = () => {
           ))}
 
         {!statsLoading && statsError && (
-          <div className="col-span-1 sm:col-span-2 lg:col-span-4 flex flex-col items-center justify-center p-8 bg-red-50/50 border border-red-200 rounded-2xl gap-3">
-            <AlertCircle className="size-8 text-red-500" />
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-red-700">
-                Failed to load statistics
-              </h3>
-              <p className="text-sm text-red-600 mt-1">{statsError}</p>
-            </div>
+          <div className="col-span-1 sm:col-span-2 lg:col-span-4">
+            <ErrorState
+              title="Failed to load statistics"
+              message={statsError}
+            />
           </div>
         )}
 
@@ -107,18 +123,14 @@ const Dashboard = () => {
             </div>
           </>
         )}
+
         {!chartsLoading && chartsError && (
-          <div className="col-span-1 md:col-span-3 flex flex-col items-center justify-center p-8 bg-red-50/50 border border-red-200 rounded-2xl gap-3">
-            <AlertCircle className="size-8 text-red-500" />
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-red-700">
-                Failed to load charts
-              </h3>
-              <p className="text-sm text-red-600 mt-1">{chartsError}</p>
-            </div>
+          <div className="col-span-1 md:col-span-3">
+            <ErrorState title="Failed to load charts" message={chartsError} />
           </div>
         )}
-        {!chartsLoading && !chartsError && (
+
+        {!chartsLoading && !chartsError && charts && (
           <>
             <div className="col-span-1 md:col-span-2">
               <TrendChart data={charts?.reservationTrend} />
@@ -137,15 +149,46 @@ const Dashboard = () => {
           description="Reservations awaiting confirmation"
           link="/admin/reservations"
         >
-          {reservations.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>{item?.customerName}</TableCell>
-              <TableCell>{item?.formattedDate}</TableCell>
-              <TableCell>{item?.guests}</TableCell>
-              <TableCell>{item?.timeSlot}</TableCell>
-              <TableCell>{item?.status}</TableCell>
+          {reservationsLoading && <DashboardTableSkeleton />}
+
+          {!reservationsLoading && reservationsError && (
+            <TableRow>
+              <TableCell colSpan={headerReservation.length} className="p-4">
+                <ErrorState
+                  title="Failed to load reservations"
+                  message={reservationsError}
+                />
+              </TableCell>
             </TableRow>
-          ))}
+          )}
+
+          {!reservationsLoading &&
+            !reservationsError &&
+            reservations?.length === 0 && (
+              <TableRow>
+                <TableCell
+                  colSpan={headerReservation.length}
+                  className="h-32 text-center text-sm text-muted-foreground"
+                >
+                  No pending reservations found.
+                </TableCell>
+              </TableRow>
+            )}
+
+          {!reservationsLoading &&
+            !reservationsError &&
+            reservations?.length > 0 &&
+            reservations.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{item?.customerName}</TableCell>
+                <TableCell>{item?.formattedDate}</TableCell>
+                <TableCell>{item?.guests}</TableCell>
+                <TableCell>{formatTimeSlot(item?.timeSlot)}</TableCell>
+                <TableCell>
+                  <Badge className="bg-green-500">{item?.status}</Badge>
+                </TableCell>
+              </TableRow>
+            ))}
         </DashboardTableCard>
 
         <DashboardTableCard
@@ -154,15 +197,44 @@ const Dashboard = () => {
           description="Customer inquiries awaiting response."
           link="/admin/contacts"
         >
-          {contacts.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>{item?.name}</TableCell>
-              <TableCell>{item?.email}</TableCell>
-              <TableCell>{item?.subject}</TableCell>
-              <TableCell>{item?.formattedCreatedAt}</TableCell>
-              <TableCell>{item?.status}</TableCell>
+          {contactsLoading && <DashboardTableSkeleton />}
+
+          {!contactsLoading && contactsError && (
+            <TableRow>
+              <TableCell colSpan={headerContact.length} className="p-4">
+                <ErrorState
+                  title="Failed to load contacts"
+                  message={contactsError}
+                />
+              </TableCell>
             </TableRow>
-          ))}
+          )}
+
+          {!contactsLoading && !contactsError && contacts?.length === 0 && (
+            <TableRow>
+              <TableCell
+                colSpan={headerContact.length}
+                className="h-32 text-center text-sm text-muted-foreground"
+              >
+                No pending contacts found.
+              </TableCell>
+            </TableRow>
+          )}
+
+          {!contactsLoading &&
+            !contactsError &&
+            contacts?.length > 0 &&
+            contacts.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{item?.name}</TableCell>
+                <TableCell>{item?.email}</TableCell>
+                <TableCell>{item?.subject}</TableCell>
+                <TableCell>{item?.formattedCreatedAt}</TableCell>
+                <TableCell>
+                  <Badge className="bg-green-500">{item?.status}</Badge>
+                </TableCell>
+              </TableRow>
+            ))}
         </DashboardTableCard>
       </div>
     </>

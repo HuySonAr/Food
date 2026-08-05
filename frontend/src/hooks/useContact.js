@@ -62,7 +62,13 @@ export const useContact = () => {
   };
 };
 
-export const useAdminContacts = (page, limit, keyword, status, sort) => {
+export const useAdminContacts = ({
+  page = 1,
+  limit = 10,
+  keyword = '',
+  status = '',
+  sort = 'desc',
+} = {}) => {
   const [contacts, setContacts] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(true);
