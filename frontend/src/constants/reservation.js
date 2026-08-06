@@ -9,6 +9,25 @@ export const TIME_SLOTS = [
   { value: '20:30', label: '08:30 PM' },
 ];
 
+export const STATUS_RESERVATION = [
+  {
+    value: 'pending',
+    label: 'Pending',
+  },
+  {
+    value: 'confirmed',
+    label: 'Confirmed',
+  },
+  {
+    value: 'completed',
+    label: 'Completed',
+  },
+  {
+    value: 'cancelled',
+    label: 'Cancelled',
+  },
+];
+
 
 export const GUEST_OPTIONS = Array.from({ length: 200 }, (_, index) => ({
   value: index + 1,

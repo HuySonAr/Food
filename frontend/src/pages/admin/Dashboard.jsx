@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 import StatCard from '@/components/admin/dashboard/StatCard';
 import { CARDS_CONFIG } from '@/constants/cardStats';
 import StatCardSkeleton from '@/components/skeleton/StatCardSkeleton';
-import { AlertCircle } from 'lucide-react';
 import TrendChart from '@/components/admin/dashboard/TrendChart';
 import SegmentedControl from '@/components/SegmentedControl';
 import { TIME_RANGES } from '@/constants/buttonTime';
